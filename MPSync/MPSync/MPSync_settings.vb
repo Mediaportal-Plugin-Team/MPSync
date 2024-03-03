@@ -679,27 +679,6 @@ Public Class MPSync_settings
         If cb_folders_crc32.Checked Then cb_folders_md5.Checked = False
     End Sub
 
-    Private Function isProcessRunning(Optional ByVal wait As Boolean = True) As Boolean
-
-        If wait Then
-            Me.Cursor = Cursors.WaitCursor
-            MPSync_process.wait(3, False)
-            Me.Cursor = Cursors.Default
-        End If
-
-        Try
-            For Each clsProcess As Process In Process.GetProcesses()
-                If clsProcess.ProcessName = "MPSync_Process" Then
-                    Return True
-                End If
-            Next
-        Catch ex As Exception
-        End Try
-
-        Return False
-
-    End Function
-
     Private Sub nud_max_streams_ValueChanged(sender As Object, e As EventArgs) Handles nud_max_DB_streams.ValueChanged
         If nud_max_DB_streams.Value = 0 Then max_DB_threads = -1 Else max_DB_threads = nud_max_DB_streams.Value
     End Sub
@@ -707,19 +686,6 @@ Public Class MPSync_settings
     Private Sub nud_max_folder_streams_ValueChanged(sender As Object, e As EventArgs) Handles nud_max_folder_streams.ValueChanged
         If nud_max_folder_streams.Value = 0 Then max_folder_threads = -1 Else max_folder_threads = nud_max_folder_streams.Value
     End Sub
-
-    Private Function isProcessAuto() As Boolean
-
-        Dim status As Boolean = False
-        Dim regKey As Microsoft.Win32.RegistryKey
-
-        regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Run", True)
-        status = Not (regKey.GetValue("MPSync_Process") Is Nothing)
-        regKey.Close()
-
-        Return status
-
-    End Function
 
     Private Sub b_sync_now_Click(sender As Object, e As EventArgs) Handles b_sync_now.Click
 
