@@ -158,7 +158,7 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>md plugins\process
+copy MPSync.dll plugins\process</PostBuildEvent>
   </PropertyGroup>
 </Project>
