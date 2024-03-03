@@ -48,18 +48,8 @@ Partial Class MPSync_settings
         Me.Label14 = New System.Windows.Forms.Label()
         Me.Label13 = New System.Windows.Forms.Label()
         Me.nud_max_DB_streams = New System.Windows.Forms.NumericUpDown()
-        Me.Panel6 = New System.Windows.Forms.Panel()
-        Me.rb_process = New System.Windows.Forms.RadioButton()
-        Me.rb_normal = New System.Windows.Forms.RadioButton()
         Me.Panel2 = New System.Windows.Forms.Panel()
         Me.cb_debug = New System.Windows.Forms.CheckBox()
-        Me.tp_process = New System.Windows.Forms.TabPage()
-        Me.b_removeautostart = New System.Windows.Forms.Button()
-        Me.b_processauto = New System.Windows.Forms.Button()
-        Me.b_processstop = New System.Windows.Forms.Button()
-        Me.b_processstart = New System.Windows.Forms.Button()
-        Me.tb_processstatus = New System.Windows.Forms.TextBox()
-        Me.Label7 = New System.Windows.Forms.Label()
         Me.tp_database = New System.Windows.Forms.TabPage()
         Me.tc_database = New System.Windows.Forms.TabControl()
         Me.tp_db_paths = New System.Windows.Forms.TabPage()
@@ -141,9 +131,7 @@ Partial Class MPSync_settings
         Me.Panel7.SuspendLayout()
         CType(Me.nud_max_folder_streams, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.nud_max_DB_streams, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.Panel6.SuspendLayout()
         Me.Panel2.SuspendLayout()
-        Me.tp_process.SuspendLayout()
         Me.tp_database.SuspendLayout()
         Me.tc_database.SuspendLayout()
         Me.tp_db_paths.SuspendLayout()
@@ -239,7 +227,6 @@ Partial Class MPSync_settings
         '
         Me.tc_settings.Controls.Add(Me.tp_selection)
         Me.tc_settings.Controls.Add(Me.tp_configuration)
-        Me.tc_settings.Controls.Add(Me.tp_process)
         Me.tc_settings.Location = New System.Drawing.Point(3, 7)
         Me.tc_settings.Name = "tc_settings"
         Me.tc_settings.SelectedIndex = 0
@@ -350,7 +337,6 @@ Partial Class MPSync_settings
         '
         Me.tp_configuration.BackColor = System.Drawing.SystemColors.ButtonFace
         Me.tp_configuration.Controls.Add(Me.Panel7)
-        Me.tp_configuration.Controls.Add(Me.Panel6)
         Me.tp_configuration.Controls.Add(Me.Panel2)
         Me.tp_configuration.Location = New System.Drawing.Point(4, 22)
         Me.tp_configuration.Name = "tp_configuration"
@@ -422,42 +408,6 @@ Partial Class MPSync_settings
         Me.nud_max_DB_streams.TabIndex = 0
         Me.nud_max_DB_streams.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
-        'Panel6
-        '
-        Me.Panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Panel6.Controls.Add(Me.rb_process)
-        Me.Panel6.Controls.Add(Me.rb_normal)
-        Me.Panel6.Location = New System.Drawing.Point(12, 135)
-        Me.Panel6.Name = "Panel6"
-        Me.Panel6.Size = New System.Drawing.Size(545, 71)
-        Me.Panel6.TabIndex = 72
-        Me.Panel6.Visible = False
-        '
-        'rb_process
-        '
-        Me.rb_process.AutoSize = True
-        Me.rb_process.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.rb_process.Location = New System.Drawing.Point(158, 37)
-        Me.rb_process.Name = "rb_process"
-        Me.rb_process.Size = New System.Drawing.Size(189, 20)
-        Me.rb_process.TabIndex = 74
-        Me.rb_process.Text = "Run as a Windows process"
-        Me.rb_process.UseVisualStyleBackColor = True
-        Me.rb_process.Visible = False
-        '
-        'rb_normal
-        '
-        Me.rb_normal.AutoSize = True
-        Me.rb_normal.Checked = True
-        Me.rb_normal.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.rb_normal.Location = New System.Drawing.Point(158, 11)
-        Me.rb_normal.Name = "rb_normal"
-        Me.rb_normal.Size = New System.Drawing.Size(227, 20)
-        Me.rb_normal.TabIndex = 72
-        Me.rb_normal.TabStop = True
-        Me.rb_normal.Text = "Run from MediaPortal or Manually"
-        Me.rb_normal.UseVisualStyleBackColor = True
-        '
         'Panel2
         '
         Me.Panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
@@ -477,83 +427,6 @@ Partial Class MPSync_settings
         Me.cb_debug.TabIndex = 65
         Me.cb_debug.Text = "Enable DEBUG logs"
         Me.cb_debug.UseVisualStyleBackColor = True
-        '
-        'tp_process
-        '
-        Me.tp_process.BackColor = System.Drawing.SystemColors.ButtonFace
-        Me.tp_process.Controls.Add(Me.b_removeautostart)
-        Me.tp_process.Controls.Add(Me.b_processauto)
-        Me.tp_process.Controls.Add(Me.b_processstop)
-        Me.tp_process.Controls.Add(Me.b_processstart)
-        Me.tp_process.Controls.Add(Me.tb_processstatus)
-        Me.tp_process.Controls.Add(Me.Label7)
-        Me.tp_process.Location = New System.Drawing.Point(4, 22)
-        Me.tp_process.Name = "tp_process"
-        Me.tp_process.Padding = New System.Windows.Forms.Padding(3)
-        Me.tp_process.Size = New System.Drawing.Size(568, 152)
-        Me.tp_process.TabIndex = 2
-        Me.tp_process.Text = "Process"
-        '
-        'b_removeautostart
-        '
-        Me.b_removeautostart.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.b_removeautostart.Location = New System.Drawing.Point(177, 93)
-        Me.b_removeautostart.Name = "b_removeautostart"
-        Me.b_removeautostart.Size = New System.Drawing.Size(214, 23)
-        Me.b_removeautostart.TabIndex = 10
-        Me.b_removeautostart.Text = "Remove Process from AutoStart"
-        Me.b_removeautostart.UseVisualStyleBackColor = True
-        '
-        'b_processauto
-        '
-        Me.b_processauto.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.b_processauto.Location = New System.Drawing.Point(177, 66)
-        Me.b_processauto.Name = "b_processauto"
-        Me.b_processauto.Size = New System.Drawing.Size(214, 23)
-        Me.b_processauto.TabIndex = 9
-        Me.b_processauto.Text = "Set Process to AutoStart"
-        Me.b_processauto.UseVisualStyleBackColor = True
-        '
-        'b_processstop
-        '
-        Me.b_processstop.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.b_processstop.Location = New System.Drawing.Point(177, 39)
-        Me.b_processstop.Name = "b_processstop"
-        Me.b_processstop.Size = New System.Drawing.Size(214, 23)
-        Me.b_processstop.TabIndex = 7
-        Me.b_processstop.Text = "Stop Process"
-        Me.b_processstop.UseVisualStyleBackColor = True
-        '
-        'b_processstart
-        '
-        Me.b_processstart.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.b_processstart.Location = New System.Drawing.Point(177, 12)
-        Me.b_processstart.Name = "b_processstart"
-        Me.b_processstart.Size = New System.Drawing.Size(214, 23)
-        Me.b_processstart.TabIndex = 6
-        Me.b_processstart.Text = "Start Process now"
-        Me.b_processstart.UseVisualStyleBackColor = True
-        '
-        'tb_processstatus
-        '
-        Me.tb_processstatus.BackColor = System.Drawing.SystemColors.ButtonFace
-        Me.tb_processstatus.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.tb_processstatus.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.tb_processstatus.ForeColor = System.Drawing.Color.Red
-        Me.tb_processstatus.Location = New System.Drawing.Point(280, 123)
-        Me.tb_processstatus.Name = "tb_processstatus"
-        Me.tb_processstatus.Size = New System.Drawing.Size(195, 15)
-        Me.tb_processstatus.TabIndex = 4
-        '
-        'Label7
-        '
-        Me.Label7.AutoSize = True
-        Me.Label7.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label7.Location = New System.Drawing.Point(174, 122)
-        Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(100, 16)
-        Me.Label7.TabIndex = 3
-        Me.Label7.Text = "Service Status :"
         '
         'tp_database
         '
@@ -1328,12 +1201,8 @@ Partial Class MPSync_settings
         Me.Panel7.PerformLayout()
         CType(Me.nud_max_folder_streams, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.nud_max_DB_streams, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.Panel6.ResumeLayout(False)
-        Me.Panel6.PerformLayout()
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
-        Me.tp_process.ResumeLayout(False)
-        Me.tp_process.PerformLayout()
         Me.tp_database.ResumeLayout(False)
         Me.tc_database.ResumeLayout(False)
         Me.tp_db_paths.ResumeLayout(False)
@@ -1452,19 +1321,9 @@ Partial Class MPSync_settings
     Friend WithEvents rb_timestamp As System.Windows.Forms.RadioButton
     Friend WithEvents rb_triggers As System.Windows.Forms.RadioButton
     Friend WithEvents tp_configuration As System.Windows.Forms.TabPage
-    Friend WithEvents Panel6 As System.Windows.Forms.Panel
-    Friend WithEvents rb_process As System.Windows.Forms.RadioButton
-    Friend WithEvents rb_normal As System.Windows.Forms.RadioButton
     Friend WithEvents Panel2 As System.Windows.Forms.Panel
     Friend WithEvents cb_debug As System.Windows.Forms.CheckBox
-    Friend WithEvents tp_process As System.Windows.Forms.TabPage
-    Friend WithEvents tb_processstatus As System.Windows.Forms.TextBox
-    Friend WithEvents Label7 As System.Windows.Forms.Label
-    Friend WithEvents b_processstart As System.Windows.Forms.Button
-    Friend WithEvents b_processauto As System.Windows.Forms.Button
-    Friend WithEvents b_processstop As System.Windows.Forms.Button
     Friend WithEvents cb_vacuum As System.Windows.Forms.CheckBox
-    Friend WithEvents b_removeautostart As System.Windows.Forms.Button
     Friend WithEvents tt_folders_md5 As System.Windows.Forms.ToolTip
     Friend WithEvents cb_folders_crc32 As System.Windows.Forms.CheckBox
     Friend WithEvents cb_folders_md5 As System.Windows.Forms.CheckBox

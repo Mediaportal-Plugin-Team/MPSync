@@ -310,18 +310,6 @@ Public Class MPSync_settings
         populate_watchedchecklistbox(clb_watched)
         populate_objectcheckedlistbox(clb_object_list, object_list)
 
-        'check if process is running
-        'If isProcessRunning() Then tb_processstatus.Text = "RUNNING" Else tb_processstatus.Text = "STOPPED"
-
-        'check if process is set to autostart
-        'b_processauto.Enabled = Not isProcessAuto()
-        'b_removeautostart.Enabled = Not b_processauto.Enabled
-
-        'rb_normal.Checked = b_processauto.Enabled
-        'rb_process.Checked = Not b_processauto.Enabled
-
-        If b_processauto.Enabled And tc_settings.TabPages.Contains(tp_process) Then tc_settings.TabPages.Remove(tp_process)
-
     End Sub
 
     Private Sub setSettings()
@@ -683,21 +671,6 @@ Public Class MPSync_settings
         clb_watched.Enabled = rb_w_specific.Checked
     End Sub
 
-    Private Sub rb_process_CheckedChanged(sender As Object, e As EventArgs) Handles rb_process.CheckedChanged
-        b_sync_now.Enabled = Not rb_process.Checked
-
-        If rb_process.Checked Then
-            If Not tc_settings.TabPages.Contains(tp_process) Then tc_settings.TabPages.Add(tp_process)
-        Else
-            If tc_settings.TabPages.Contains(tp_process) Then tc_settings.TabPages.Remove(tp_process)
-        End If
-    End Sub
-
-    Private Sub rb_normal_CheckedChanged(sender As Object, e As EventArgs) Handles rb_normal.CheckedChanged
-        If isProcessAuto() Then b_removeautostart_Click(Nothing, Nothing)
-        If isProcessRunning() Then b_processstop_Click(Nothing, Nothing)
-    End Sub
-
     Private Sub cb_folders_md5_CheckedChanged(sender As Object, e As EventArgs) Handles cb_folders_md5.CheckedChanged
         If cb_folders_md5.Checked Then cb_folders_crc32.Checked = False
     End Sub
@@ -727,52 +700,12 @@ Public Class MPSync_settings
 
     End Function
 
-    Private Sub b_processstart_Click(sender As Object, e As EventArgs) Handles b_processstart.Click
-
-        If isProcessRunning() Then Exit Sub
-
-        Dim process As New Process()
-
-        process.StartInfo.UseShellExecute = True
-        process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden
-        process.StartInfo.FileName = Config.GetFile(Config.Dir.Base, "MPSync_Process.exe")
-
-        Try
-            process.Start()
-        Catch ex As Exception
-            MsgBox("MPSync Process not started", MsgBoxStyle.OkOnly, "Start Process")
-        End Try
-
-        If isProcessRunning() Then tb_processstatus.Text = "RUNNING" Else tb_processstatus.Text = "STOPPED"
-
-    End Sub
-
     Private Sub nud_max_streams_ValueChanged(sender As Object, e As EventArgs) Handles nud_max_DB_streams.ValueChanged
         If nud_max_DB_streams.Value = 0 Then max_DB_threads = -1 Else max_DB_threads = nud_max_DB_streams.Value
     End Sub
 
     Private Sub nud_max_folder_streams_ValueChanged(sender As Object, e As EventArgs) Handles nud_max_folder_streams.ValueChanged
         If nud_max_folder_streams.Value = 0 Then max_folder_threads = -1 Else max_folder_threads = nud_max_folder_streams.Value
-    End Sub
-
-    Private Sub b_processstop_Click(sender As Object, e As EventArgs) Handles b_processstop.Click
-
-        Dim ObjW As Object
-        Dim ObjP As Object
-        Dim ObjP2 As Object
-
-        Try
-            ObjW = GetObject("winmgmts://.")
-            ObjP = ObjW.execquery("Select * from win32_Process")
-            For Each ObjP2 In ObjP
-                If ObjP2.Name = "MPSync_Process.exe" Then ObjP2.Terminate()
-            Next
-        Catch ex As Exception
-            MsgBox("MPSync Process not stopped", MsgBoxStyle.OkOnly, "Stop Process")
-        End Try
-
-        If isProcessRunning() Then tb_processstatus.Text = "RUNNING" Else tb_processstatus.Text = "STOPPED"
-
     End Sub
 
     Private Function isProcessAuto() As Boolean
@@ -787,30 +720,6 @@ Public Class MPSync_settings
         Return status
 
     End Function
-
-    Private Sub b_processauto_Click(sender As Object, e As EventArgs) Handles b_processauto.Click
-        Dim regKey As Microsoft.Win32.RegistryKey
-        regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Run", True)
-        regKey.SetValue("MPSync_Process", """" & Config.GetFile(Config.Dir.Base, "MPSync_Process.exe") & """")
-        regKey.Close()
-        b_processauto.Enabled = False
-        b_removeautostart.Enabled = True
-    End Sub
-
-    Private Sub b_removeautostart_Click(sender As Object, e As EventArgs) Handles b_removeautostart.Click
-        Dim regKey As Microsoft.Win32.RegistryKey
-        regKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Run", True)
-        regKey.DeleteValue("MPSync_Process", False)
-        regKey.Close()
-        b_processauto.Enabled = True
-        b_removeautostart.Enabled = False
-    End Sub
-
-    Private Sub tb_servicestatus_TextChanged(sender As Object, e As EventArgs) Handles tb_processstatus.TextChanged
-        b_processstart.Enabled = (tb_processstatus.Text.Contains("STOP") Or tb_processstatus.Text = "N/A")
-        b_processstop.Enabled = (Not tb_processstatus.Text.Contains("STOP") And tb_processstatus.Text <> "N/A")
-        If b_processstop.Enabled Then SyncNowStatus()
-    End Sub
 
     Private Sub b_sync_now_Click(sender As Object, e As EventArgs) Handles b_sync_now.Click
 
