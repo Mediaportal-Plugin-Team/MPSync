@@ -309,7 +309,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=268&amp;cf_id=24</OnlineLocation>
     <ReleaseDate>2019-10-19T21:32:32.840803+02:00</ReleaseDate>
     <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
-    <Location>..\..\..\..\MPEI\[Name]-v[Version].mpe1</Location>
+    <Location>[Name]-v[Version].mpe1</Location>
     <Params>
       <Items>
         <SectionParam Name="Icon">
@@ -405,7 +405,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
   <ProjectSettings>
     <FolderGroups />
     <ProjectFilename>MPSync.xmp2</ProjectFilename>
-    <UpdatePath1>..\MPSync\MPSync_update.xml</UpdatePath1>
+    <UpdatePath1>MPSync_update.xml</UpdatePath1>
     <UpdatePath2 />
     <UpdatePath3 />
   </ProjectSettings>
