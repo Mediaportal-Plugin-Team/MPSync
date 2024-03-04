@@ -10,21 +10,21 @@
         <Description>MPSync install</Description>
         <Files>
           <Items>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\MPSync\MPSync\bin\Release\MPSync.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{9d3d7efb-e025-422a-8fdd-f24ccf451cfd}-CDB_Sync.dll</ZipFileName>
               <DestinationFilename>%Plugins%\process\MPSync.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\MPSync_Launcher\MPSync_Launcher\bin\Release\MPSync_Launcher.exe</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{aa975164-ed31-4f2e-90a4-0afebc9adfe9}-MPSync_Launcher.exe</ZipFileName>
               <DestinationFilename>%Base%\MPSync_Launcher.exe</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\MPSync\FastDirectoryEnumerator\bin\Release\MPSync_DirectoryEnumerator.dll</LocalFileName>
@@ -41,14 +41,14 @@
         <Description>SQLite</Description>
         <Files>
           <Items>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\MPSync\MPSync\bin\Release\System.Data.SQLite.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{fde0e846-bd88-4806-9aa1-01837c53aa25}-System.Data.SQLite.dll</ZipFileName>
               <DestinationFilename>%Plugins%\process\System.Data.SQLite.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\MPSync\MPSync\bin\Release\x86\SQLite.Interop.dll</LocalFileName>
@@ -62,7 +62,7 @@
   </Groups>
   <Sections>
     <Items>
-      <SectionItem Guid="8fdc51e5-256a-4957-aba7-421181310c21" Name="Welcome Screen" ConditionGroup="">
+      <SectionItem Guid="8fdc51e5-256a-4957-aba7-421181310c21" Name="Welcome Screen" ConditionGroup="" Condition="None">
         <Params>
           <Items>
             <SectionParam Name="Header text">
@@ -96,7 +96,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <PanelName>Welcome Screen</PanelName>
         <WizardButtonsEnum>NextCancel</WizardButtonsEnum>
       </SectionItem>
-      <SectionItem Guid="3d5a7eec-a86b-468b-a7cc-eab86697a7a4" Name="Install Section" ConditionGroup="Default">
+      <SectionItem Guid="3d5a7eec-a86b-468b-a7cc-eab86697a7a4" Name="Install Section" ConditionGroup="Default" Condition="None">
         <Params>
           <Items>
             <SectionParam Name="Header Title">
@@ -118,13 +118,13 @@ Click Next to continue or Cancel to exit Setup.</Value>
         </Params>
         <Actions>
           <Items>
-            <ActionItem Name="InstallFiles" ActionType="InstallFiles" ConditionGroup="">
+            <ActionItem Name="InstallFiles" ActionType="InstallFiles" ConditionGroup="" Condition="None">
               <Params>
                 <Items />
               </Params>
               <ExecuteLocation>AfterPanelShow</ExecuteLocation>
             </ActionItem>
-            <ActionItem Name="CreateShortCut" ActionType="CreateShortCut" ConditionGroup="">
+            <ActionItem Name="CreateShortCut" ActionType="CreateShortCut" ConditionGroup="" Condition="None">
               <Params>
                 <Items>
                   <SectionParam Name="ShortCut location">
@@ -158,7 +158,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <PanelName>Install Section</PanelName>
         <WizardButtonsEnum>Next</WizardButtonsEnum>
       </SectionItem>
-      <SectionItem Guid="7749bb04-68f1-43b6-bbd8-d39958183996" Name="Setup Complete" ConditionGroup="Default">
+      <SectionItem Guid="7749bb04-68f1-43b6-bbd8-d39958183996" Name="Setup Complete" ConditionGroup="Default" Condition="None">
         <Params>
           <Items>
             <SectionParam Name="Header text">
@@ -185,7 +185,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
         </Params>
         <Actions>
           <Items>
-            <ActionItem Name="ConfigurePlugin" ActionType="ConfigurePlugin" ConditionGroup="">
+            <ActionItem Name="ConfigurePlugin" ActionType="ConfigurePlugin" ConditionGroup="" Condition="None">
               <Params>
                 <Items>
                   <SectionParam Name="Path to plugin">
@@ -226,6 +226,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <WarnOnly>true</WarnOnly>
         <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
         <Name>Moving Pictures</Name>
+        <Condition>None</Condition>
       </DependencyItem>
       <DependencyItem>
         <Type>Extension</Type>
@@ -245,25 +246,27 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <WarnOnly>true</WarnOnly>
         <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
         <Name>MP-TVSeries</Name>
+        <Condition>None</Condition>
       </DependencyItem>
       <DependencyItem>
         <Type>MediaPortal</Type>
         <Id />
         <MinVersion>
-          <Major>1</Major>
-          <Minor>1</Minor>
-          <Build>6</Build>
-          <Revision>27644</Revision>
+          <Major>*</Major>
+          <Minor>*</Minor>
+          <Build>*</Build>
+          <Revision>*</Revision>
         </MinVersion>
         <MaxVersion>
-          <Major>1</Major>
-          <Minor>1</Minor>
-          <Build>6</Build>
-          <Revision>27644</Revision>
+          <Major>*</Major>
+          <Minor>*</Minor>
+          <Build>*</Build>
+          <Revision>*</Revision>
         </MaxVersion>
         <WarnOnly>false</WarnOnly>
-        <Message>This version of MPSync is only compatible with MediaPortal 1.7 or greater. Please download version that is supported by your version of MediaPortal from the MPSync homepage.</Message>
+        <Message />
         <Name>MediaPortal</Name>
+        <Condition>None</Condition>
       </DependencyItem>
     </Items>
   </Dependencies>
@@ -341,56 +344,56 @@ Click Next to continue or Cancel to exit Setup.</Value>
   </GeneralInfo>
   <UniqueFileList>
     <Items>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\MPSync\MPSync\bin\Release\MPSync.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{9d3d7efb-e025-422a-8fdd-f24ccf451cfd}-CDB_Sync.dll</ZipFileName>
         <DestinationFilename>%Plugins%\process\MPSync.dll</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\MPSync_Launcher\MPSync_Launcher\bin\Release\MPSync_Launcher.exe</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{aa975164-ed31-4f2e-90a4-0afebc9adfe9}-MPSync_Launcher.exe</ZipFileName>
         <DestinationFilename>%Base%\MPSync_Launcher.exe</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\MPSync\FastDirectoryEnumerator\bin\Release\MPSync_DirectoryEnumerator.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c84def1a-3a36-4335-97c3-99dc63114fde}-MPSync_DirectoryEnumerator.dll</ZipFileName>
         <DestinationFilename>%Plugins%\process\MPSync_DirectoryEnumerator.dll</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\MPSync\MPSync\bin\Release\System.Data.SQLite.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{fde0e846-bd88-4806-9aa1-01837c53aa25}-System.Data.SQLite.dll</ZipFileName>
         <DestinationFilename>%Plugins%\process\System.Data.SQLite.dll</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\MPSync\MPSync\bin\Release\x86\SQLite.Interop.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{a0bd48e7-3523-4734-a693-f1c331346115}-SQLite.Interop.dll</ZipFileName>
         <DestinationFilename>%Plugins%\process\x86\SQLite.Interop.dll</DestinationFilename>
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPSync.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e15323af-33c6-4e49-ae94-035bac1b73c5}-MPSync.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPSync_logo.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{352c42b5-c762-4f01-97c3-ba6fd9ff1b9b}-MPSync_logo.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
+      <FileItem InstallType="CopyFile" SystemFile="true" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MP_Packaging.png</LocalFileName>
