@@ -17,11 +17,18 @@
               <ZipFileName>Installer{CopyFile}\{9d3d7efb-e025-422a-8fdd-f24ccf451cfd}-CDB_Sync.dll</ZipFileName>
               <DestinationFilename>%Plugins%\process\MPSync.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="PlatformTarget_x86">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\MPSync_Launcher\MPSync_Launcher\bin\Release\MPSync_Launcher.exe</LocalFileName>
+              <LocalFileName>..\MPSync_Launcher\MPSync_Launcher\bin\Release\x86\MPSync_Launcher.exe</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{aa975164-ed31-4f2e-90a4-0afebc9adfe9}-MPSync_Launcher.exe</ZipFileName>
+              <DestinationFilename>%Base%\MPSync_Launcher.exe</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="PlatformTarget_x64">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPSync_Launcher\MPSync_Launcher\bin\Release\x64\MPSync_Launcher.exe</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{dc92e07c-11f9-4751-b74a-28ed195fb914}-MPSync_Launcher.exe</ZipFileName>
               <DestinationFilename>%Base%\MPSync_Launcher.exe</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
@@ -48,12 +55,19 @@
               <ZipFileName>Installer{CopyFile}\{fde0e846-bd88-4806-9aa1-01837c53aa25}-System.Data.SQLite.dll</ZipFileName>
               <DestinationFilename>%Plugins%\process\System.Data.SQLite.dll</DestinationFilename>
             </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="PlatformTarget_x86">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\MPSync\MPSync\bin\Release\x86\SQLite.Interop.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{a0bd48e7-3523-4734-a693-f1c331346115}-SQLite.Interop.dll</ZipFileName>
               <DestinationFilename>%Plugins%\process\x86\SQLite.Interop.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="PlatformTarget_x64">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\MPSync\MPSync\bin\Release\x64\SQLite.Interop.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{263c7de5-cba7-4ec3-84b3-d256b0617398}-SQLite.Interop.dll</ZipFileName>
+              <DestinationFilename>%Plugins%\process\x64\SQLite.Interop.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -252,10 +266,10 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <Type>MediaPortal</Type>
         <Id />
         <MinVersion>
-          <Major>*</Major>
-          <Minor>*</Minor>
-          <Build>*</Build>
-          <Revision>*</Revision>
+          <Major>1</Major>
+          <Minor>32</Minor>
+          <Build>100</Build>
+          <Revision>0</Revision>
         </MinVersion>
         <MaxVersion>
           <Major>*</Major>
@@ -264,7 +278,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
           <Revision>*</Revision>
         </MaxVersion>
         <WarnOnly>false</WarnOnly>
-        <Message />
+        <Message>Requires MediaPortal 1.32.100.0 or higher!</Message>
         <Name>MediaPortal</Name>
         <Condition>None</Condition>
       </DependencyItem>
@@ -304,11 +318,14 @@ Click Next to continue or Cancel to exit Setup.</Value>
       <Revision>22</Revision>
     </Version>
     <ExtensionDescription>This plugin synchronizes your MediaPortal databases with a central database as well as thumbs folder, so that any additons can by automatically applied to any other MP seat you might have in your household.</ExtensionDescription>
-    <VersionDescription>Added some more logging and minor bug fixing.  Bumping up SQLite version.</VersionDescription>
+    <VersionDescription>- Added some more logging and minor bug fixing
+- Bumping up SQLite version.
+- Now available as x86 and x64</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=268&amp;cf_id=24</OnlineLocation>
-    <ReleaseDate>2019-10-19T21:32:32.840803+02:00</ReleaseDate>
+    <ReleaseDate>2024-03-04T21:26:41.8468783+01:00</ReleaseDate>
     <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
+    <PlatformCompatibility>AnyCPU</PlatformCompatibility>
     <Location>[Name]-v[Version].mpe1</Location>
     <Params>
       <Items>
@@ -354,8 +371,15 @@ Click Next to continue or Cancel to exit Setup.</Value>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\MPSync_Launcher\MPSync_Launcher\bin\Release\MPSync_Launcher.exe</LocalFileName>
+        <LocalFileName>..\MPSync_Launcher\MPSync_Launcher\bin\Release\x86\MPSync_Launcher.exe</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{aa975164-ed31-4f2e-90a4-0afebc9adfe9}-MPSync_Launcher.exe</ZipFileName>
+        <DestinationFilename>%Base%\MPSync_Launcher.exe</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPSync_Launcher\MPSync_Launcher\bin\Release\x64\MPSync_Launcher.exe</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{dc92e07c-11f9-4751-b74a-28ed195fb914}-MPSync_Launcher.exe</ZipFileName>
         <DestinationFilename>%Base%\MPSync_Launcher.exe</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
@@ -378,6 +402,13 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <LocalFileName>..\MPSync\MPSync\bin\Release\x86\SQLite.Interop.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{a0bd48e7-3523-4734-a693-f1c331346115}-SQLite.Interop.dll</ZipFileName>
         <DestinationFilename>%Plugins%\process\x86\SQLite.Interop.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true" Condition="None">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\MPSync\MPSync\bin\Release\x64\SQLite.Interop.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{263c7de5-cba7-4ec3-84b3-d256b0617398}-SQLite.Interop.dll</ZipFileName>
+        <DestinationFilename>%Plugins%\process\x64\SQLite.Interop.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true" Condition="None">
         <Param1 />
