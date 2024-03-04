@@ -32,20 +32,21 @@
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>false</WarnOnly>
             <Message>requires MediaPortal version 1.1.6.27644 to 1.1.6.27644.</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -65,6 +66,7 @@
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -84,6 +86,7 @@
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -126,6 +129,7 @@
         <OnlineLocation>https://cdbsync-plugin.googlecode.com/files/MPSync-v1.0.0.0.mpe1</OnlineLocation>
         <ReleaseDate>2013-04-06T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -193,20 +197,21 @@
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>false</WarnOnly>
             <Message>requires MediaPortal version 1.1.6.27644 to 1.1.6.27644.</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -226,6 +231,7 @@
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -245,6 +251,7 @@
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -287,6 +294,7 @@
         <OnlineLocation>https://cdbsync-plugin.googlecode.com/files/MPSync-v1.0.0.1.mpe1</OnlineLocation>
         <ReleaseDate>2013-04-08T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -354,20 +362,21 @@
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>false</WarnOnly>
             <Message>requires MediaPortal version 1.1.6.27644 to 1.1.6.27644.</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -387,6 +396,7 @@
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -406,6 +416,7 @@
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -448,6 +459,7 @@
         <OnlineLocation>https://cdbsync-plugin.googlecode.com/files/MPSync-v1.0.0.2.mpe1</OnlineLocation>
         <ReleaseDate>2013-04-09T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -515,20 +527,21 @@
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>false</WarnOnly>
             <Message>requires MediaPortal version 1.1.6.27644 to 1.1.6.27644.</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -548,6 +561,7 @@
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -567,6 +581,7 @@
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -609,6 +624,7 @@
         <OnlineLocation>https://cdbsync-plugin.googlecode.com/files/MPSync-v1.0.0.3.mpe1</OnlineLocation>
         <ReleaseDate>2013-04-10T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -690,6 +706,7 @@
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -709,25 +726,27 @@
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>true</WarnOnly>
             <Message>This version of MPSync requires MediaPortal 1.2.0 Beta or higher!</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -755,6 +774,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
         <OnlineLocation>https://cdbsync-plugin.googlecode.com/files/MPSync-v1.0.0.6.mpe1</OnlineLocation>
         <ReleaseDate>2013-05-19T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -836,6 +856,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -855,25 +876,27 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>true</WarnOnly>
             <Message>This version of MPSync requires MediaPortal 1.2.0 Beta or higher!</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -918,6 +941,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
         <OnlineLocation>https://cdbsync-plugin.googlecode.com/files/MPSync-v1.0.0.7.mpe1</OnlineLocation>
         <ReleaseDate>2013-05-21T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -999,6 +1023,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -1018,25 +1043,27 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>true</WarnOnly>
             <Message>This version of MPSync requires MediaPortal 1.2.0 Beta or higher!</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -1079,6 +1106,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
         <OnlineLocation>https://cdbsync-plugin.googlecode.com/files/MPSync-v1.0.0.8.mpe1</OnlineLocation>
         <ReleaseDate>2013-05-24T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -1160,6 +1188,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -1179,25 +1208,27 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>true</WarnOnly>
             <Message>This version of MPSync requires MediaPortal 1.2.0 Beta or higher!</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -1240,6 +1271,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
         <OnlineLocation>https://cdbsync-plugin.googlecode.com/files/MPSync-v1.0.0.9.mpe1</OnlineLocation>
         <ReleaseDate>2013-08-21T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -1321,6 +1353,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -1340,25 +1373,27 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>true</WarnOnly>
             <Message>This version of MPSync requires MediaPortal 1.2.0 Beta or higher!</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -1401,6 +1436,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=268&amp;cf_id=24</OnlineLocation>
         <ReleaseDate>2014-04-27T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -1482,6 +1518,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -1501,25 +1538,27 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>true</WarnOnly>
             <Message>This version of MPSync requires MediaPortal 1.2.0 Beta or higher!</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -1562,6 +1601,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=268&amp;cf_id=24</OnlineLocation>
         <ReleaseDate>2014-05-02T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -1643,6 +1683,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -1662,25 +1703,27 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>false</WarnOnly>
             <Message>This version of MPSync is only compatible with MediaPortal 1.7 or greater. Please download version that is supported by your version of MediaPortal from the MPSync homepage.</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -1723,6 +1766,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=268&amp;cf_id=24</OnlineLocation>
         <ReleaseDate>2015-02-21T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -1804,6 +1848,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -1823,25 +1868,27 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>false</WarnOnly>
             <Message>This version of MPSync is only compatible with MediaPortal 1.7 or greater. Please download version that is supported by your version of MediaPortal from the MPSync homepage.</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -1884,6 +1931,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=268&amp;cf_id=24</OnlineLocation>
         <ReleaseDate>2015-02-28T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>E:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -1965,6 +2013,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -1984,25 +2033,27 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>false</WarnOnly>
             <Message>This version of MPSync is only compatible with MediaPortal 1.7 or greater. Please download version that is supported by your version of MediaPortal from the MPSync homepage.</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -2045,6 +2096,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=268&amp;cf_id=24</OnlineLocation>
         <ReleaseDate>2016-03-22T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>D:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -2126,6 +2178,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -2145,25 +2198,27 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>false</WarnOnly>
             <Message>This version of MPSync is only compatible with MediaPortal 1.7 or greater. Please download version that is supported by your version of MediaPortal from the MPSync homepage.</Message>
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -2208,6 +2263,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=268&amp;cf_id=24</OnlineLocation>
         <ReleaseDate>2018-06-23T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
+        <PlatformCompatibility>x86</PlatformCompatibility>
         <Location>D:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
@@ -2289,6 +2345,7 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires Moving Pictures version 1.5.1.1487 or higher</Message>
             <Name>Moving Pictures</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>Extension</Type>
@@ -2308,25 +2365,27 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
             <WarnOnly>true</WarnOnly>
             <Message>requires MP-TVSeries version 3.4.2.2018 or higher</Message>
             <Name>MP-TVSeries</Name>
+            <Condition>None</Condition>
           </DependencyItem>
           <DependencyItem>
             <Type>MediaPortal</Type>
             <Id />
             <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MinVersion>
             <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
+              <Major>*</Major>
+              <Minor>*</Minor>
+              <Build>*</Build>
+              <Revision>*</Revision>
             </MaxVersion>
             <WarnOnly>false</WarnOnly>
-            <Message>This version of MPSync is only compatible with MediaPortal 1.7 or greater. Please download version that is supported by your version of MediaPortal from the MPSync homepage.</Message>
+            <Message />
             <Name>MediaPortal</Name>
+            <Condition>None</Condition>
           </DependencyItem>
         </Items>
       </Dependencies>
@@ -2369,7 +2428,8 @@ Compatibility with MediaPortal v1.4.0</VersionDescription>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=268&amp;cf_id=24</OnlineLocation>
         <ReleaseDate>2018-09-23T23:39:41</ReleaseDate>
         <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
-        <Location>D:\Software\MediaPortal\MPSync\[Name]-v[Version].mpe1</Location>
+        <PlatformCompatibility>x86</PlatformCompatibility>
+        <Location>..\..\..\..\MPEI\[Name]-v[Version].mpe1</Location>
         <Params>
           <Items>
             <SectionParam Name="Online Icon">
