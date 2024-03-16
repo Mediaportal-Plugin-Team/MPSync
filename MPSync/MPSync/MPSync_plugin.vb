@@ -1,6 +1,4 @@
 ﻿Imports System.ComponentModel
-Imports System.Windows.Forms
-
 Imports MediaPortal.Configuration
 Imports MediaPortal.GUI.Library
 

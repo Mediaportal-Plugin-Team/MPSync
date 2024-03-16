@@ -1,7 +1,4 @@
-﻿Imports MediaPortal.Configuration
-Imports MediaPortal.GUI.Library
-
-Imports System.ComponentModel
+﻿Imports System.ComponentModel
 Imports System.Data.SQLite
 
 Public Class MPSync_process_DB

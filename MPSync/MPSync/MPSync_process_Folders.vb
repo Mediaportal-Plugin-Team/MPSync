@@ -1,7 +1,4 @@
-﻿Imports MediaPortal.GUI.Library
-
-Imports System.IO
-Imports System.Collections.Generic
+﻿Imports System.IO
 Imports System.Threading
 
 Imports DirectoryEnumerator
