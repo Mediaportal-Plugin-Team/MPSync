@@ -455,43 +455,44 @@ Public Class MPSync_process
 
         If debug Then MPSync_process.logStats("MPSync: [TableExist] Check if table " & table & " in database " & path & database & " exists.", "DEBUG")
 
-        Dim SQLconnect As New SQLite.SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-        Dim SQLreader As SQLiteDataReader
         Dim exist As Boolean = False
 
-        SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        If Not dropifempty Then SQLconnect.ConnectionString += ";Read Only=True;"
+            SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
 
-        SQLconnect.Open()
-        SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='" & table & "'"
-        SQLreader = SQLcommand.ExecuteReader()
+            If Not dropifempty Then SQLconnect.ConnectionString += ";Read Only=True;"
 
-        While SQLreader.Read()
-            exist = True
-        End While
+            SQLconnect.Open()
+            SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='" & table & "'"
+            Using SQLreader = SQLcommand.ExecuteReader()
 
-        SQLreader.Close()
+                While SQLreader.Read()
+                    exist = True
+                End While
 
-        If exist And dropifempty Then
-            SQLcommand.CommandText = "SELECT COUNT(*) FROM " & table
-            SQLreader = SQLcommand.ExecuteReader()
-            SQLreader.Read()
+            End Using
 
-            If Int(SQLreader(0)) = 0 Then
-                SQLreader.Close()
-                SQLcommand.CommandText = "DROP TABLE " & table
-                Try
-                    SQLcommand.ExecuteNonQuery()
-                    exist = False
-                Catch ex As Exception
-                    logStats("MPSync: [TableExist] Table not dropped with exception - " & ex.Message, "ERROR")
-                End Try
+            If exist And dropifempty Then
+                SQLcommand.CommandText = "SELECT COUNT(*) FROM " & table
+                Using SQLreader = SQLcommand.ExecuteReader()
+                    SQLreader.Read()
+
+                    If Int(SQLreader(0)) = 0 Then
+                        SQLreader.Close()
+                        SQLcommand.CommandText = "DROP TABLE " & table
+                        Try
+                            SQLcommand.ExecuteNonQuery()
+                            exist = False
+                        Catch ex As Exception
+                            logStats("MPSync: [TableExist] Table not dropped with exception - " & ex.Message, "ERROR")
+                        End Try
+                    End If
+                End Using
             End If
-        End If
 
-        SQLconnect.Close()
+        End Using
 
         Return exist
 
@@ -501,24 +502,24 @@ Public Class MPSync_process
 
         If debug Then MPSync_process.logStats("MPSync: [FieldExist] Check field exists for table " & table & " in database " & path & database, "DEBUG")
 
-        Dim SQLconnect As New SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-        Dim SQLreader As SQLiteDataReader
         Dim columns() As String = Nothing
         Dim x As Integer = 0
 
-        SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database) & ";Read Only=True;"
-        SQLconnect.Open()
-        SQLcommand.CommandText = "PRAGMA table_info (" & table & ")"
-        SQLreader = SQLcommand.ExecuteReader()
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        While SQLreader.Read()
-            ReDim Preserve columns(x)
-            columns(x) = LCase(SQLreader.GetString(1))
-            x += 1
-        End While
+            SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database) & ";Read Only=True;"
+            SQLconnect.Open()
+            SQLcommand.CommandText = "PRAGMA table_info (" & table & ")"
+            Using SQLreader = SQLcommand.ExecuteReader()
 
-        SQLconnect.Close()
+                While SQLreader.Read()
+                    ReDim Preserve columns(x)
+                    columns(x) = LCase(SQLreader.GetString(1))
+                    x += 1
+                End While
+            End Using
+        End Using
 
         If x = 0 Then ReDim Preserve columns(0)
 
@@ -617,39 +618,37 @@ Public Class MPSync_process
         logStats("MPSync: [getDBInfo][bw_checkDB_worker] Checking integrity of database " & parm(0) & parm(1) & " in progress...", "LOG")
 
         If IO.File.Exists(parm(0) & parm(1)) Then
+            Using SQLconnect As New SQLiteConnection(),
+                SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-            Dim SQLconnect As New SQLiteConnection()
-            Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-            Dim SQLreader As SQLiteDataReader
-
-            Try
-                SQLconnect.ConnectionString = "Data Source=" & p_Database(parm(0) & parm(1)) & ";Read Only=True;"
-                SQLconnect.Open()
-                SQLcommand.CommandText = "PRAGMA integrity_check;"
-                SQLreader = SQLcommand.ExecuteReader()
-                SQLreader.Read()
-                check = SQLreader.GetString(0)
-                SQLreader.Close()
-            Catch ex As Exception
-                check = "error"
-            End Try
-
-            SQLconnect.Close()
+                Try
+                    SQLconnect.ConnectionString = "Data Source=" & p_Database(parm(0) & parm(1)) & ";Read Only=True;"
+                    SQLconnect.Open()
+                    SQLcommand.CommandText = "PRAGMA integrity_check;"
+                    Using SQLreader = SQLcommand.ExecuteReader()
+                        SQLreader.Read()
+                        check = SQLreader.GetString(0)
+                    End Using
+                Catch ex As Exception
+                    check = "error"
+                End Try
+            End Using
 
             If check = "ok" And _vacuum Then
                 logStats("MPSync: [getDBInfo][bw_checkDB_worker] VACUUM of database " & parm(0) & parm(1) & " started.", "LOG")
 
-                Try
-                    SQLconnect.ConnectionString = "Data Source=" & p_Database(parm(0) & parm(1)) & ";"
-                    SQLconnect.Open()
-                    SQLcommand.CommandText = "VACUUM;"
-                    SQLcommand.ExecuteNonQuery()
-                    logStats("MPSync: [getDBInfo][bw_checkDB_worker] VACUUM of database " & parm(0) & parm(1) & " complete.", "LOG")
-                Catch ex As Exception
-                    logStats("MPSync: [getDBInfo][bw_checkDB_worker] VACUUM database " & parm(2) & " failed with exception: " & ex.Message, "ERROR")
-                End Try
-
-                SQLconnect.Close()
+                Using SQLconnect As New SQLiteConnection(),
+                SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+                    Try
+                        SQLconnect.ConnectionString = "Data Source=" & p_Database(parm(0) & parm(1)) & ";"
+                        SQLconnect.Open()
+                        SQLcommand.CommandText = "VACUUM;"
+                        SQLcommand.ExecuteNonQuery()
+                        logStats("MPSync: [getDBInfo][bw_checkDB_worker] VACUUM of database " & parm(0) & parm(1) & " complete.", "LOG")
+                    Catch ex As Exception
+                        logStats("MPSync: [getDBInfo][bw_checkDB_worker] VACUUM database " & parm(2) & " failed with exception: " & ex.Message, "ERROR")
+                    End Try
+                End Using
             End If
 
             If check <> "ok" Then IO.File.Delete(parm(0) & parm(1))
@@ -979,20 +978,19 @@ Public Class MPSync_process
 
         If SQL <> Nothing Then
 
-            Dim SQLconnect As New SQLiteConnection()
-            Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+            Using SQLconnect As New SQLiteConnection(),
+                SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-            SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
+                SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
+                Try
+                    SQLconnect.Open()
+                    SQLcommand.CommandText = SQL
+                    SQLcommand.ExecuteNonQuery()
+                Catch ex As Exception
+                    logStats("MPSync: [Create_Watch_Tables] Error executing '" & SQLcommand.CommandText & "' on database " & database, "ERROR")
+                End Try
 
-            Try
-                SQLconnect.Open()
-                SQLcommand.CommandText = SQL
-                SQLcommand.ExecuteNonQuery()
-            Catch ex As Exception
-                logStats("MPSync: [Create_Watch_Tables] Error executing '" & SQLcommand.CommandText & "' on database " & database, "ERROR")
-            End Try
-
-            SQLconnect.Close()
+            End Using
 
         End If
 
@@ -1006,20 +1004,19 @@ Public Class MPSync_process
 
         logStats("MPSync: [Drop_Watch_Tables] Drop watch table mpsync from database " & path & database, "DEBUG")
 
-        Dim SQLconnect As New SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
+            SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
+            Try
+                SQLconnect.Open()
+                SQLcommand.CommandText = "DROP TABLE IF EXISTS mpsync"
+                SQLcommand.ExecuteNonQuery()
+            Catch ex As Exception
+                logStats("MPSync: [Drop_Watch_Tables] Error executing '" & SQLcommand.CommandText & "' from database " & path & database, "ERROR")
+            End Try
 
-        Try
-            SQLconnect.Open()
-            SQLcommand.CommandText = "DROP TABLE IF EXISTS mpsync"
-            SQLcommand.ExecuteNonQuery()
-        Catch ex As Exception
-            logStats("MPSync: [Drop_Watch_Tables] Error executing '" & SQLcommand.CommandText & "' from database " & path & database, "ERROR")
-        End Try
-
-        SQLconnect.Close()
+        End Using
 
         logStats("MPSync: [Drop_Watch_Tables] Watch table mpsync from database " & path & database & " dropped.", "DEBUG")
 
@@ -1121,20 +1118,18 @@ Public Class MPSync_process
 
         If SQL <> Nothing Then
 
-            Dim SQLconnect As New SQLiteConnection()
-            Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+            Using SQLconnect As New SQLiteConnection(),
+                SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-            SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
-
-            Try
-                SQLconnect.Open()
-                SQLcommand.CommandText = SQL
-                SQLcommand.ExecuteNonQuery()
-            Catch ex As Exception
-                logStats("MPSync: [Create_Watch_Triggers] Error executing '" & SQLcommand.CommandText & " on database " & path & database, "ERROR")
-            End Try
-
-            SQLconnect.Close()
+                SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
+                Try
+                    SQLconnect.Open()
+                    SQLcommand.CommandText = SQL
+                    SQLcommand.ExecuteNonQuery()
+                Catch ex As Exception
+                    logStats("MPSync: [Create_Watch_Triggers] Error executing '" & SQLcommand.CommandText & " on database " & path & database, "ERROR")
+                End Try
+            End Using
 
         End If
 
@@ -1151,39 +1146,37 @@ Public Class MPSync_process
         Dim SQL As String = Nothing
         Dim pattern() As String = Split(searchpattern, "|")
 
-        Dim SQLconnect As New SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-        Dim SQLreader As SQLiteDataReader
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        Try
-            SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
-            SQLconnect.Open()
+            Try
+                SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
+                SQLconnect.Open()
 
-            If table = Nothing Then
-                SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='trigger'"
-            Else
-                SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='trigger' and tbl_name='" & table & "'"
-            End If
+                If table = Nothing Then
+                    SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='trigger'"
+                Else
+                    SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='trigger' and tbl_name='" & table & "'"
+                End If
 
-            SQLreader = SQLcommand.ExecuteReader()
+                Using SQLreader = SQLcommand.ExecuteReader()
 
-            While SQLreader.Read()
-                For x As Integer = 0 To UBound(pattern)
-                    If Left(SQLreader.GetString(0), Len(pattern(x))) = pattern(x) Then SQL = SQL & "DROP TRIGGER " & SQLreader.GetString(0) & "; "
-                Next
-            End While
+                    While SQLreader.Read()
+                        For x As Integer = 0 To UBound(pattern)
+                            If Left(SQLreader.GetString(0), Len(pattern(x))) = pattern(x) Then SQL = SQL & "DROP TRIGGER " & SQLreader.GetString(0) & "; "
+                        Next
+                    End While
+                End Using
 
-            SQLreader.Close()
+                If SQL <> Nothing Then
+                    SQLcommand.CommandText = SQL
+                    SQLcommand.ExecuteNonQuery()
+                End If
+            Catch ex As Exception
+                logStats("MPSync: [Drop_Triggers] Error executing '" & SQLcommand.CommandText & "' on database " & path & database, "ERROR")
+            End Try
 
-            If SQL <> Nothing Then
-                SQLcommand.CommandText = SQL
-                SQLcommand.ExecuteNonQuery()
-            End If
-        Catch ex As Exception
-            logStats("MPSync: [Drop_Triggers] Error executing '" & SQLcommand.CommandText & "' on database " & path & database, "ERROR")
-        End Try
-
-        SQLconnect.Close()
+        End Using
 
         logStats("MPSync: [Drop_Triggers] Triggers in database " & path & database & " dropped.", "DEBUG")
 
@@ -1202,64 +1195,59 @@ Public Class MPSync_process
         Dim d_SQL, u_SQL, i_SQL As String
         Dim omit As Array = {"mpsync", "mpsync_trigger", "sqlite_sequence", "sqlite_stat1", "sqlite_stat2"}
 
-        Dim SQLconnect As New SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-        Dim SQLreader As SQLiteDataReader
+        Using SQLconnect As New SQLiteConnection(),
+          SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        SQLconnect.ConnectionString = "Data Source=" & p_Database(database)
-        SQLconnect.Open()
-        SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='table'"
-        SQLreader = SQLcommand.ExecuteReader()
+            SQLconnect.ConnectionString = "Data Source=" & p_Database(database)
+            SQLconnect.Open()
+            SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='table'"
+            Using SQLreader = SQLcommand.ExecuteReader()
+                While SQLreader.Read()
 
-        While SQLreader.Read()
+                    If Array.IndexOf(omit, SQLreader(0)) = -1 Then
+                        x += 1
+                        ReDim Preserve table(x)
+                        table(x) = SQLreader.GetString(0)
+                    End If
 
-            If Array.IndexOf(omit, SQLreader(0)) = -1 Then
-                x += 1
-                ReDim Preserve table(x)
-                table(x) = SQLreader.GetString(0)
+                End While
+            End Using
+
+            If x = -1 Then
+                ReDim Preserve table(0)
+                table(0) = Nothing
             End If
 
-        End While
+            SQLcommand.CommandText = "SELECT sql FROM sqlite_master WHERE type='trigger'"
+            Using SQLreader = SQLcommand.ExecuteReader()
+                x = -1
 
-        SQLreader.Close()
+                While SQLreader.Read()
 
-        If x = -1 Then
-            ReDim Preserve table(0)
-            table(0) = Nothing
-        End If
+                    If Array.IndexOf(omit, SQLreader(0)) = -1 Then
+                        x += 1
+                        ReDim Preserve trigger(x)
+                        trigger(x) = SQLreader.GetString(0)
+                    End If
 
-        SQLcommand.CommandText = "SELECT sql FROM sqlite_master WHERE type='trigger'"
-        SQLreader = SQLcommand.ExecuteReader()
+                End While
+            End Using
 
-        x = -1
-
-        While SQLreader.Read()
-
-            If Array.IndexOf(omit, SQLreader(0)) = -1 Then
-                x += 1
-                ReDim Preserve trigger(x)
-                trigger(x) = SQLreader.GetString(0)
+            If x = -1 Then
+                ReDim Preserve trigger(0)
+                trigger(0) = Nothing
             End If
 
-        End While
+            If TableExist(IO.Path.GetDirectoryName(database) & "\", IO.Path.GetFileName(database), "mpsync_trigger", True) = False Then
 
-        SQLreader.Close()
+                logStats("MPSync: [Create_Sync_Triggers] Creating work table mpsync_trigger in database " & database, "LOG")
 
-        If x = -1 Then
-            ReDim Preserve trigger(0)
-            trigger(0) = Nothing
-        End If
-
-        If TableExist(IO.Path.GetDirectoryName(database) & "\", IO.Path.GetFileName(database), "mpsync_trigger", True) = False Then
-
-            logStats("MPSync: [Create_Sync_Triggers] Creating work table mpsync_trigger in database " & database, "LOG")
-
-            Try
-                SQLcommand.CommandText = "CREATE TABLE IF NOT EXISTS mpsync_trigger (id INTEGER PRIMARY KEY AUTOINCREMENT, tablename TEXT, lastupdated TEXT)"
-                SQLcommand.ExecuteNonQuery()
-            Catch ex As Exception
-                logStats("MPSync: [Create_Sync_Triggers] Error executing '" & SQLcommand.CommandText & " on database " & database, "ERROR")
-            End Try
+                Try
+                    SQLcommand.CommandText = "CREATE TABLE IF NOT EXISTS mpsync_trigger (id INTEGER PRIMARY KEY AUTOINCREMENT, tablename TEXT, lastupdated TEXT)"
+                    SQLcommand.ExecuteNonQuery()
+                Catch ex As Exception
+                    logStats("MPSync: [Create_Sync_Triggers] Error executing '" & SQLcommand.CommandText & " on database " & database, "ERROR")
+                End Try
 
         End If
 
@@ -1293,47 +1281,49 @@ Public Class MPSync_process
                     "END"
 
             If trigger.Contains(u_SQL) And trigger.Contains(i_SQL) And trigger.Contains(d_SQL) Then
-                u_SQL = Nothing
-                i_SQL = Nothing
-                d_SQL = Nothing
-            Else
-                u_SQL = u_SQL & "; "
-                i_SQL = i_SQL & "; "
-                d_SQL = d_SQL & "; "
-            End If
+                    u_SQL = Nothing
+                    i_SQL = Nothing
+                    d_SQL = Nothing
+                Else
+                    u_SQL = u_SQL & "; "
+                    i_SQL = i_SQL & "; "
+                    d_SQL = d_SQL & "; "
+                End If
 
-            ReDim Preserve SQL(x)
-            SQL(x) = u_SQL & i_SQL & d_SQL
+                ReDim Preserve SQL(x)
+                SQL(x) = u_SQL & i_SQL & d_SQL
 
-        Next
+            Next
 
-        SQLconnect.Close()
+        End Using
 
         For x = 0 To UBound(SQL)
             If SQL(x) <> Nothing Then Drop_Triggers(IO.Path.GetDirectoryName(database) & "\", IO.Path.GetFileName(database), "mpsync_work", table(x))
         Next
 
-        Try
-            SQLconnect.ConnectionString = "Data Source=" & p_Database(database)
-            SQLconnect.Open()
+        Using SQLconnect As New SQLiteConnection(),
+        SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+            Try
 
-            For x = 0 To UBound(SQL)
+                SQLconnect.ConnectionString = "Data Source=" & p_Database(database)
+                SQLconnect.Open()
 
-                If SQL(x) <> Nothing Then
+                For x = 0 To UBound(SQL)
 
-                    logStats("MPSync: [Create_Sync_Triggers] Creating synchronization triggers on table " & table(x) & " in database " & database, "LOG")
+                    If SQL(x) <> Nothing Then
 
-                    SQLcommand.CommandText = SQL(x)
-                    SQLcommand.ExecuteNonQuery()
+                        logStats("MPSync: [Create_Sync_Triggers] Creating synchronization triggers on table " & table(x) & " in database " & database, "LOG")
 
-                End If
+                        SQLcommand.CommandText = SQL(x)
+                        SQLcommand.ExecuteNonQuery()
 
-            Next
-        Catch ex As Exception
-            logStats("MPSync: [Create_Sync_Triggers] Error executing '" & SQLcommand.CommandText & " on table " & table(x) & " in database " & database & " with exception: " & ex.Message, "ERROR")
-        End Try
+                    End If
 
-        SQLconnect.Close()
+                Next
+            Catch ex As Exception
+                logStats("MPSync: [Create_Sync_Triggers] Error executing '" & SQLcommand.CommandText & " on table " & table(x) & " in database " & database & " with exception: " & ex.Message, "ERROR")
+            End Try
+        End Using
 
         logStats("MPSync: [Create_Sync_Triggers] Synchronization triggers in database " & database & " checked.", "DEBUG")
 

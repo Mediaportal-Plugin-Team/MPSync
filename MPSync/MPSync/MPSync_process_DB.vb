@@ -84,78 +84,82 @@ Public Class MPSync_process_DB
         Dim fields As String = "*"
         Dim data(,) As String = Nothing
 
-        Dim SQLconnect As New SQLite.SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-        Dim SQLreader As SQLiteDataReader = Nothing
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        Try
+            Try
 
-            If columns.Count = 0 Then
-                columns = getFields(path, database, table)
-            Else
-                fields = getSelectFields(columns)
-            End If
-
-            z = getPK(columns)
-            records = RecordCount(path, database, table, where)
-
-            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database) & ";Read Only=True;"
-            SQLconnect.Open()
-
-            If records > 0 Then
-
-                SQLcommand.CommandText = "SELECT rowid, " & fields & " FROM " & table
-
-                If where <> Nothing Then
-                    SQLcommand.CommandText &= " WHERE " & where
+                If columns.Count = 0 Then
+                    columns = getFields(path, database, table)
+                Else
+                    fields = getSelectFields(columns)
                 End If
 
-                If order <> Nothing Then
-                    SQLcommand.CommandText &= " ORDER BY " & order
+                z = getPK(columns)
+                records = RecordCount(path, database, table, where)
+
+                SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database) & ";Read Only=True;"
+                SQLconnect.Open()
+
+                If records > 0 Then
+
+                    SQLcommand.CommandText = "SELECT rowid, " & fields & " FROM " & table
+
+                    If where <> Nothing Then
+                        SQLcommand.CommandText &= " WHERE " & where
+                    End If
+
+                    If order <> Nothing Then
+                        SQLcommand.CommandText &= " ORDER BY " & order
+                    End If
+
+                    Using SQLreader = SQLcommand.ExecuteReader()
+
+                        ReDim Preserve data(2, records - 1)
+                        Try
+
+                            While SQLreader.Read()
+
+                                data(0, x) = SQLreader.GetString(0)
+
+                                For y = 0 To columns.Count - 1
+                                    If Not IsDBNull(SQLreader(y + 1)) Then
+                                        Select Case columns(y).type
+                                            Case "INTEGER", "REAL", "BLOB"
+                                                data(1, x) &= SQLreader(y + 1).ToString.Replace(",", ".") & dlm
+                                                If y = z Then data(2, x) = SQLreader(y + 1).ToString
+                                            Case "TIMESTAMP"
+                                                data(1, x) &= Format(SQLreader(y + 1), "yyyy-MM-dd HH:mm:ss") & dlm
+                                                If y = z Then data(2, x) = Format(SQLreader(y + 1), "yyyy-MM-dd HH:mm:ss")
+                                            Case Else
+                                                data(1, x) &= SQLreader.GetString(y + 1) & dlm
+                                                If y = z Then data(2, x) = SQLreader.GetString(y + 1)
+                                        End Select
+                                    Else
+                                        data(1, x) &= "NULL" & dlm
+                                        If y = z Then data(2, x) = "NULL"
+                                    End If
+                                Next
+
+                                x += 1
+
+                            End While
+                        Catch ex As Exception
+                            MPSync_process.logStats("MPSync: Error reading table " & table & " rowid """ & SQLreader.GetString(0) & """ in " & database & " with exception: " & ex.Message, "DEBUG")
+                            Throw
+                        End Try
+
+                    End Using
+                Else
+                    ReDim data(2, 0)
                 End If
 
-                SQLreader = SQLcommand.ExecuteReader()
+            Catch ex As Exception
+                MPSync_process.logStats("MPSync: Error reading data from table " & table & " in database " & database, "ERROR")
+                data = Nothing
+            End Try
 
-                ReDim Preserve data(2, records - 1)
-
-                While SQLreader.Read()
-
-                    data(0, x) = SQLreader.GetString(0)
-
-                    For y = 0 To columns.Count - 1
-                        If Not IsDBNull(SQLreader(y + 1)) Then
-                            Select Case columns(y).type
-                                Case "INTEGER", "REAL", "BLOB"
-                                    data(1, x) &= SQLreader(y + 1).ToString.Replace(",", ".") & dlm
-                                    If y = z Then data(2, x) = SQLreader(y + 1).ToString
-                                Case "TIMESTAMP"
-                                    data(1, x) &= Format(SQLreader(y + 1), "yyyy-MM-dd HH:mm:ss") & dlm
-                                    If y = z Then data(2, x) = Format(SQLreader(y + 1), "yyyy-MM-dd HH:mm:ss")
-                                Case Else
-                                    data(1, x) &= SQLreader.GetString(y + 1) & dlm
-                                    If y = z Then data(2, x) = SQLreader.GetString(y + 1)
-                            End Select
-                        Else
-                            data(1, x) &= "NULL" & dlm
-                            If y = z Then data(2, x) = "NULL"
-                        End If
-                    Next
-
-                    x += 1
-
-                End While
-
-            Else
-                ReDim data(2, 0)
-            End If
-
-        Catch ex As Exception
-            MPSync_process.logStats("MPSync: Error reading table " & table & " rowid """ & SQLreader.GetString(0) & """ in " & database & " with exception: " & ex.Message, "DEBUG")
-            MPSync_process.logStats("MPSync: Error reading data from table " & table & " in database " & database, "ERROR")
-            data = Nothing
-        End Try
-
-        SQLconnect.Close()
+        End Using
 
         Return data
 
@@ -227,32 +231,32 @@ Public Class MPSync_process_DB
 
         'MPSync_process.logStats("MPSync: [getFields]", "DEBUG")
 
-        Dim SQLconnect As New SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-        Dim SQLreader As SQLiteDataReader
         Dim columns As List(Of ColumnInfo) = New List(Of ColumnInfo)
-        Dim x As Integer = 0
 
-        Try
-            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database) & ";Read Only=True;"
-            SQLconnect.Open()
-            SQLcommand.CommandText = "PRAGMA table_info (" & table & ")"
-            SQLreader = SQLcommand.ExecuteReader()
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+            Dim x As Integer = 0
 
-            While SQLreader.Read()
-                Dim t As ColumnInfo = New ColumnInfo
-                t.name = LCase(SQLreader.GetString(1))
-                t.type = UCase(SQLreader.GetString(2))
-                t.notNull = SQLreader.GetBoolean(3)
-                If Not IsDBNull(SQLreader(4)) Then t.dflt_value = SQLreader.GetString(4).Replace("'", "")
-                t.pk = SQLreader.GetBoolean(5)
-                columns.Add(t)
-            End While
-        Catch ex As Exception
-            MPSync_process.logStats("MPSync: Error getFields " & table & " in " & database & " with exception: " & ex.Message, "DEBUG")
-        End Try
+            Try
+                SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database) & ";Read Only=True;"
+                SQLconnect.Open()
+                SQLcommand.CommandText = "PRAGMA table_info (" & table & ")"
+                Using SQLreader = SQLcommand.ExecuteReader()
+                    While SQLreader.Read()
+                        Dim t As ColumnInfo = New ColumnInfo
+                        t.name = LCase(SQLreader.GetString(1))
+                        t.type = UCase(SQLreader.GetString(2))
+                        t.notNull = SQLreader.GetBoolean(3)
+                        If Not IsDBNull(SQLreader(4)) Then t.dflt_value = SQLreader.GetString(4).Replace("'", "")
+                        t.pk = SQLreader.GetBoolean(5)
+                        columns.Add(t)
+                    End While
+                End Using
+            Catch ex As Exception
+                MPSync_process.logStats("MPSync: Error getFields " & table & " in " & database & " with exception: " & ex.Message, "DEBUG")
+            End Try
 
-        SQLconnect.Close()
+        End Using
 
         Return columns
 
@@ -276,30 +280,30 @@ Public Class MPSync_process_DB
 
         MPSync_process.logStats("MPSync: [RecordCount] Get number of records for table " & table & " in database " & path & database, "DEBUG")
 
-        Dim SQLconnect As New SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-        Dim SQLreader As SQLiteDataReader
         Dim x As Integer
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        Try
+            Try
 
-            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database) & ";Read Only=True;"
-            SQLconnect.Open()
+                SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database) & ";Read Only=True;"
+                SQLconnect.Open()
 
-            If where = Nothing Then
-                SQLcommand.CommandText = "SELECT COUNT(*) FROM " & table
-            Else
-                SQLcommand.CommandText = "SELECT COUNT(*) FROM " & table & " WHERE " & where
-            End If
+                If where = Nothing Then
+                    SQLcommand.CommandText = "SELECT COUNT(*) FROM " & table
+                Else
+                    SQLcommand.CommandText = "SELECT COUNT(*) FROM " & table & " WHERE " & where
+                End If
 
-            SQLreader = SQLcommand.ExecuteReader()
-            SQLreader.Read()
-            x = SQLreader.GetInt32(0)
-        Catch ex As Exception
-            x = 0
-        End Try
+                Using SQLreader = SQLcommand.ExecuteReader()
+                    SQLreader.Read()
+                    x = SQLreader.GetInt32(0)
+                End Using
+            Catch ex As Exception
+                x = 0
+            End Try
 
-        SQLconnect.Close()
+        End Using
 
         Return x
 
@@ -397,37 +401,38 @@ Public Class MPSync_process_DB
 
             MPSync_process.logStats("MPSync: [getCurrentTableValues] Load current table values from " & table & " in database " & path & database, "DEBUG")
 
-            Dim SQLconnect As New SQLiteConnection()
-            Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-            Dim SQLreader As SQLiteDataReader
-
-            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database) & ";Read Only=True;"
-            SQLconnect.Open()
-            SQLcommand.CommandText = "SELECT " & fields & " FROM " & table & " WHERE " & where
-            SQLreader = SQLcommand.ExecuteReader()
-            SQLreader.Read()
-
-            Dim i, x, z As Integer
             Dim curvalues() As String
 
-            curvalues = Nothing
+            Using SQLconnect As New SQLiteConnection(),
+                SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-            For x = 0 To columns.Count - 1
-                z = Array.IndexOf(mps_cols, columns(x).name)
-                If z <> -1 Then
-                    If columns(x).name <> pkey Then
-                        ReDim Preserve curvalues(i)
-                        If Not IsDBNull(SQLreader(i)) Then
-                            curvalues(i) = columns(x).name & "=" & FormatValue(SQLreader(i), columns(x).type)
-                        Else
-                            curvalues(i) = columns(x).name & "=" & FormatValue("NULL", columns(x).type)
+                SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database) & ";Read Only=True;"
+                SQLconnect.Open()
+                SQLcommand.CommandText = "SELECT " & fields & " FROM " & table & " WHERE " & where
+                Using SQLreader = SQLcommand.ExecuteReader()
+                    SQLreader.Read()
+
+                    Dim i, x, z As Integer
+
+                    curvalues = Nothing
+
+                    For x = 0 To columns.Count - 1
+                        z = Array.IndexOf(mps_cols, columns(x).name)
+                        If z <> -1 Then
+                            If columns(x).name <> pkey Then
+                                ReDim Preserve curvalues(i)
+                                If Not IsDBNull(SQLreader(i)) Then
+                                    curvalues(i) = columns(x).name & "=" & FormatValue(SQLreader(i), columns(x).type)
+                                Else
+                                    curvalues(i) = columns(x).name & "=" & FormatValue("NULL", columns(x).type)
+                                End If
+                                i += 1
+                            End If
                         End If
-                        i += 1
-                    End If
-                End If
-            Next
+                    Next
+                End Using
 
-            SQLconnect.Close()
+            End Using
 
             Return curvalues
 
@@ -576,60 +581,60 @@ Public Class MPSync_process_DB
 
         Dim parm As List(Of TableInfo) = New List(Of TableInfo)
 
-        Dim SQLconnect As New SQLite.SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-        Dim SQLreader As SQLiteDataReader = Nothing
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        MPSync_process.logStats("MPSync: [checkbytrigger] checking for tables in database " & source & database & " that need synchronization...", "DEBUG")
+            MPSync_process.logStats("MPSync: [checkbytrigger] checking for tables in database " & source & database & " that need synchronization...", "DEBUG")
 
-        SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(source & database) & ";Read Only=True;"
-        SQLconnect.Open()
-
-        Try
-
-            SQLcommand.CommandText = "SELECT tablename FROM mpsync_trigger WHERE lastupdated > '" & lastsync & "' ORDER BY lastupdated, tablename"
-            SQLreader = SQLcommand.ExecuteReader()
-
-            While SQLreader.Read()
-                parm.Add(New TableInfo(source, target, database, SQLreader.GetString(0)))
-
-            End While
-
-        Catch ex As Exception
-            MPSync_process.logStats("MPSync: [checkbytrigger] Error reading mpsync_trigger from " & target & database & " with exception: " & ex.Message, "ERROR")
-        End Try
-
-        SQLreader.Close()
-
-        If MPSync_process.TableExist(target, database, "mpsync") Then
-
-            SQLconnect.Close()
-
-            MPSync_process.logStats("MPSync: [checkbytrigger] checking for records in mpsync table in database " & target & database, "DEBUG")
+            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(source & database) & ";Read Only=True;"
+            SQLconnect.Open()
 
             Try
 
-                SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(target & database) & ";Read Only=True;"
-                SQLconnect.Open()
-                SQLcommand = SQLconnect.CreateCommand
-                SQLcommand.CommandText = "SELECT tablename FROM mpsync ORDER BY mps_lastupdated, tablename"
-                SQLreader = SQLcommand.ExecuteReader()
+                SQLcommand.CommandText = "SELECT tablename FROM mpsync_trigger WHERE lastupdated > '" & lastsync & "' ORDER BY lastupdated, tablename"
+                Using SQLreader = SQLcommand.ExecuteReader()
 
-                While SQLreader.Read()
-
-                    If Not parm.Any(Function(p) p.name = SQLreader.GetString(0)) Then
+                    While SQLreader.Read()
                         parm.Add(New TableInfo(source, target, database, SQLreader.GetString(0)))
-                    End If
 
-                End While
+                    End While
+                End Using
 
             Catch ex As Exception
-                MPSync_process.logStats("MPSync: [checkbytrigger] Error reading mpsync from " & target & database & " with exception: " & ex.Message, "ERROR")
+                MPSync_process.logStats("MPSync: [checkbytrigger] Error reading mpsync_trigger from " & target & database & " with exception: " & ex.Message, "ERROR")
             End Try
+        End Using
+
+        If MPSync_process.TableExist(target, database, "mpsync") Then
+
+            Using SQLconnect As New SQLiteConnection(),
+                SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+
+                MPSync_process.logStats("MPSync: [checkbytrigger] checking for records in mpsync table in database " & target & database, "DEBUG")
+
+
+                SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(target & database) & ";Read Only=True;"
+                SQLconnect.Open()
+                SQLcommand.CommandText = "SELECT tablename FROM mpsync ORDER BY mps_lastupdated, tablename"
+                Using SQLreader = SQLcommand.ExecuteReader()
+                    Try
+
+                        While SQLreader.Read()
+
+                            If Not parm.Any(Function(p) p.name = SQLreader.GetString(0)) Then
+                                parm.Add(New TableInfo(source, target, database, SQLreader.GetString(0)))
+                            End If
+
+                        End While
+
+                    Catch ex As Exception
+                        MPSync_process.logStats("MPSync: [checkbytrigger] Error reading mpsync from " & target & database & " with exception: " & ex.Message, "ERROR")
+                    End Try
+                End Using
+            End Using
 
         End If
 
-        SQLconnect.Close()
 
         MPSync_process.logStats("MPSync: [checkbytrigger] " & parm.Count.ToString & " tables in database " & source & database & " need synchronization.", "DEBUG")
 
@@ -643,37 +648,36 @@ Public Class MPSync_process_DB
 
         If MPSync_process.p_Debug Then MPSync_process.logStats("MPSync: [getDatabaseRecords] database " & database & " tables record count started.", "DEBUG")
 
-        Dim SQLconnect As New SQLite.SQLiteConnection()
-        Dim SQLcommand1 As SQLiteCommand = SQLconnect.CreateCommand
-        Dim SQLcommand2 As SQLiteCommand = SQLconnect.CreateCommand
-        Dim SQLreader1, SQLreader2 As SQLiteDataReader
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand1 As SQLiteCommand = SQLconnect.CreateCommand,
+            SQLcommand2 As SQLiteCommand = SQLconnect.CreateCommand
 
-        SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(source & database) & ";Read Only=True;"
-        SQLconnect.Open()
+            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(source & database) & ";Read Only=True;"
+            SQLconnect.Open()
 
-        SQLcommand1.CommandText = "ATTACH DATABASE '" & MPSync_process.p_Database(target & database) & "' AS target"
-        SQLcommand1.ExecuteNonQuery()
+            SQLcommand1.CommandText = "ATTACH DATABASE '" & MPSync_process.p_Database(target & database) & "' AS target"
+            SQLcommand1.ExecuteNonQuery()
 
-        SQLcommand1.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'mpsync%' AND name NOT LIKE 'sqlite%'"
-        SQLreader1 = SQLcommand1.ExecuteReader()
+            SQLcommand1.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'mpsync%' AND name NOT LIKE 'sqlite%'"
+            Using SQLreader1 = SQLcommand1.ExecuteReader()
 
-        While SQLreader1.Read()
+                While SQLreader1.Read()
 
-            SQLcommand2.CommandText = "SELECT CASE WHEN (SELECT COUNT(*) FROM " & SQLreader1.GetString(0) & " EXCEPT SELECT COUNT(*) FROM target." & SQLreader1.GetString(0) & ") IS NULL THEN 0 ELSE 1 END"
-            SQLreader2 = SQLcommand2.ExecuteReader()
-            SQLreader2.Read()
+                    SQLcommand2.CommandText = "SELECT CASE WHEN (SELECT COUNT(*) FROM " & SQLreader1.GetString(0) & " EXCEPT SELECT COUNT(*) FROM target." & SQLreader1.GetString(0) & ") IS NULL THEN 0 ELSE 1 END"
+                    Using SQLreader2 = SQLcommand2.ExecuteReader()
+                        SQLreader2.Read()
 
-            If Int(SQLreader2(0)) = 1 Then
-                If Not finalparm.Any(Function(f) f.name = SQLreader1.GetString(0)) Then
-                    finalparm.Add(New TableInfo(source, target, database, SQLreader1.GetString(0)))
-                End If
-            End If
+                        If Int(SQLreader2(0)) = 1 Then
+                            If Not finalparm.Any(Function(f) f.name = SQLreader1.GetString(0)) Then
+                                finalparm.Add(New TableInfo(source, target, database, SQLreader1.GetString(0)))
+                            End If
+                        End If
 
-            SQLreader2.Close()
+                    End Using
 
-        End While
-
-        SQLconnect.Close()
+                End While
+            End Using
+        End Using
 
         If MPSync_process.p_Debug Then MPSync_process.logStats("MPSync: [getDatabaseRecords] database " & database & " tables record count complete.", "DEBUG")
 
@@ -696,28 +700,28 @@ Public Class MPSync_process_DB
         Else
             Dim omit As Array = {"mpsync", "mpsync_trigger", "sqlite_sequence", "sqlite_stat1", "sqlite_stat2"}
 
-            Dim SQLconnect As New SQLite.SQLiteConnection()
-            Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-            Dim SQLreader As SQLiteDataReader
+            Using SQLconnect As New SQLiteConnection(),
+                SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(source & database) & ";Read Only=True;"
-            SQLconnect.Open()
+                SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(source & database) & ";Read Only=True;"
+                SQLconnect.Open()
 
-            MPSync_process.logStats("MPSync: [ProcessTables] selecting tables from database " & source & database, "DEBUG")
+                MPSync_process.logStats("MPSync: [ProcessTables] selecting tables from database " & source & database, "DEBUG")
 
 
-            SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
-            SQLreader = SQLcommand.ExecuteReader()
+                SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
+                Using SQLreader = SQLcommand.ExecuteReader()
 
-            While SQLreader.Read()
+                    While SQLreader.Read()
 
-                If Array.IndexOf(omit, SQLreader.GetString(0)) = -1 Then
-                    parm.tables.Add(New TableInfo(source, target, database, SQLreader.GetString(0)))
-                End If
+                        If Array.IndexOf(omit, SQLreader.GetString(0)) = -1 Then
+                            parm.tables.Add(New TableInfo(source, target, database, SQLreader.GetString(0)))
+                        End If
 
-            End While
+                    End While
+                End Using
 
-            SQLconnect.Close()
+            End Using
 
             MPSync_process.logStats("MPSync: [ProcessTables] " & parm.tables.Count.ToString & " table selected from database " & source & database, "DEBUG")
         End If
@@ -784,34 +788,34 @@ Public Class MPSync_process_DB
 
         MPSync_process.logStats("MPSync: [CheckTables] Check tables structures in database " & database & " started.", "DEBUG")
 
-        Dim SQLconnect As New SQLite.SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-        Dim SQLreader As SQLiteDataReader
-        Dim s_columns, t_columns As List(Of ColumnInfo)
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+            Dim s_columns, t_columns As List(Of ColumnInfo)
 
-        SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(source & database) & ";Read Only=True;"
-        SQLconnect.Open()
-        SQLcommand.CommandText = "SELECT name, sql FROM sqlite_master WHERE type=""table"""
-        SQLreader = SQLcommand.ExecuteReader()
+            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(source & database) & ";Read Only=True;"
+            SQLconnect.Open()
+            SQLcommand.CommandText = "SELECT name, sql FROM sqlite_master WHERE type=""table"""
+            Using SQLreader = SQLcommand.ExecuteReader()
 
-        While SQLreader.Read()
+                While SQLreader.Read()
 
-            s_columns = getFields(source, database, SQLreader.GetString(0))
-            t_columns = getFields(target, database, SQLreader.GetString(0))
+                    s_columns = getFields(source, database, SQLreader.GetString(0))
+                    t_columns = getFields(target, database, SQLreader.GetString(0))
 
-            If t_columns Is Nothing Then
-                CreateTable(target, database, SQLreader.GetString(1))
-                t_columns = s_columns
-            End If
-            Dim diff As IEnumerable(Of ColumnInfo) = s_columns.Where(Function(s) Not t_columns.Any(Function(t) t.name = s.name))
+                    If t_columns Is Nothing Then
+                        CreateTable(target, database, SQLreader.GetString(1))
+                        t_columns = s_columns
+                    End If
+                    Dim diff As IEnumerable(Of ColumnInfo) = s_columns.Where(Function(s) Not t_columns.Any(Function(t) t.name = s.name))
 
-            If diff.Count > 0 Then
-                AddTableMissingFields(target, database, SQLreader.GetString(0), diff)
-            End If
+                    If diff.Count > 0 Then
+                        AddTableMissingFields(target, database, SQLreader.GetString(0), diff)
+                    End If
 
-        End While
+                End While
+            End Using
 
-        SQLconnect.Close()
+        End Using
 
         MPSync_process.logStats("MPSync: [CheckTables] Check tables structures in database " & database & " complete.", "DEBUG")
 
@@ -819,53 +823,53 @@ Public Class MPSync_process_DB
 
     Private Sub CreateTable(ByVal path As String, ByVal database As String, ByVal sql As String)
 
-        Dim SQLconnect As New SQLite.SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        MPSync_process.logStats("MPSync: [Createtable] " & sql & " in database " & path & database, "DEBUG")
+            MPSync_process.logStats("MPSync: [Createtable] " & sql & " in database " & path & database, "DEBUG")
 
-        Try
-            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database)
-            SQLconnect.Open()
-            SQLcommand.CommandText = sql
-            SQLcommand.ExecuteNonQuery()
-        Catch ex As Exception
-            MPSync_process.logStats("MPSync: [Createtable] " & sql & " error with exception: " & ex.Message, "ERROR")
-        End Try
+            Try
+                SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database)
+                SQLconnect.Open()
+                SQLcommand.CommandText = sql
+                SQLcommand.ExecuteNonQuery()
+            Catch ex As Exception
+                MPSync_process.logStats("MPSync: [Createtable] " & sql & " error with exception: " & ex.Message, "ERROR")
+            End Try
 
-        SQLconnect.Close()
+        End Using
 
     End Sub
 
     Private Sub AddTableMissingFields(ByVal path As String, ByVal database As String, ByVal table As String, ByVal missing As IEnumerable(Of ColumnInfo))
 
         Dim SQL As String
-        Dim SQLconnect As New SQLite.SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        MPSync_process.logStats("MPSync: [AddTableMissingFields] Adding missing columns on target for table " & table & " in database " & database, "LOG")
+            MPSync_process.logStats("MPSync: [AddTableMissingFields] Adding missing columns on target for table " & table & " in database " & database, "LOG")
 
-        SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database)
-        SQLconnect.Open()
+            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database)
+            SQLconnect.Open()
 
-        For x As Integer = 0 To missing.Count - 1
+            For x As Integer = 0 To missing.Count - 1
 
-            SQL = "ALTER TABLE " & table & " ADD COLUMN " & missing(x).name & " " & missing(x).type & " "
+                SQL = "ALTER TABLE " & table & " ADD COLUMN " & missing(x).name & " " & missing(x).type & " "
 
-            If missing(x).notNull Then SQL &= "NOT NULL "
+                If missing(x).notNull Then SQL &= "NOT NULL "
 
-            Try
-                MPSync_process.logStats("MPSync: [AddTableMissingFields] " & SQL, "DEBUG")
-                SQLcommand.CommandText = SQL
-                SQLcommand.ExecuteNonQuery()
-            Catch ex As Exception
-                MPSync_process.logStats("MPSync: [AddTableMissingFields] " & SQL & " error with exception: " & ex.Message, "DEBUG")
-                MPSync_process.logStats("MPSync: [AddTableMissingFields] Error adding field " & missing(x).name & " to table " & table & " in " & path & database, "ERROR")
-            End Try
+                Try
+                    MPSync_process.logStats("MPSync: [AddTableMissingFields] " & SQL, "DEBUG")
+                    SQLcommand.CommandText = SQL
+                    SQLcommand.ExecuteNonQuery()
+                Catch ex As Exception
+                    MPSync_process.logStats("MPSync: [AddTableMissingFields] " & SQL & " error with exception: " & ex.Message, "DEBUG")
+                    MPSync_process.logStats("MPSync: [AddTableMissingFields] Error adding field " & missing(x).name & " to table " & table & " in " & path & database, "ERROR")
+                End Try
 
-        Next
+            Next
 
-        SQLconnect.Close()
+        End Using
 
     End Sub
 
@@ -1011,68 +1015,68 @@ Public Class MPSync_process_DB
         Dim pkey As String = Nothing
         Dim updcols As Array = table_columns.Select(Function(t) t.name).ToArray
         Dim fields, updvalues, where, update(), a_values() As String
-        Dim SQLconnect As New SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        x = getPK(columns, pkey)
+            x = getPK(columns, pkey)
 
-        SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database)
-        SQLconnect.Open()
-        SQLcommand.CommandText = "PRAGMA temp_store=2;PRAGMA journal_mode=off;PRAGMA synchronous=off;"
-        SQLcommand.ExecuteNonQuery()
+            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database)
+            SQLconnect.Open()
+            SQLcommand.CommandText = "PRAGMA temp_store=2;PRAGMA journal_mode=off;PRAGMA synchronous=off;"
+            SQLcommand.ExecuteNonQuery()
 
-        For y As Integer = 0 To UBound(w_values, 2)
+            For y As Integer = 0 To UBound(w_values, 2)
 
-            i = 0
-            fields = Nothing
-            update = Nothing
-            where = Nothing
-            a_values = Split(w_values(1, y), dlm)
+                i = 0
+                fields = Nothing
+                update = Nothing
+                where = Nothing
+                a_values = Split(w_values(1, y), dlm)
 
-            For x = 0 To columns.Count - 1
-                z = Array.IndexOf(updcols, columns(x).name)
-                If z <> -1 Then
-                    If columns(x).name <> pkey Then
-                        ReDim Preserve update(i)
-                        update(i) = columns(x).name & "=" & FormatValue(a_values(z), columns(x).type)
-                        fields &= columns(x).name & ","
-                        i += 1
-                    Else
-                        where = pkey & " = " & FormatValue(a_values(z), columns(x).type)
+                For x = 0 To columns.Count - 1
+                    z = Array.IndexOf(updcols, columns(x).name)
+                    If z <> -1 Then
+                        If columns(x).name <> pkey Then
+                            ReDim Preserve update(i)
+                            update(i) = columns(x).name & "=" & FormatValue(a_values(z), columns(x).type)
+                            fields &= columns(x).name & ","
+                            i += 1
+                        Else
+                            where = pkey & " = " & FormatValue(a_values(z), columns(x).type)
+                        End If
+                    End If
+                Next
+
+                fields = Left(fields, Len(fields) - 1)
+                where = Left(where, Len(where) - 1)
+
+                ' get update values from table and compare if anything changed
+                Dim curvalues() As String
+
+                curvalues = getCurrentTableValues(path, database, table, columns, updcols, pkey, fields, where)
+
+                If curvalues IsNot Nothing Then
+
+                    ' construct update clause
+                    updvalues = getUpdateValues(update, curvalues)
+
+                    If updvalues <> Nothing Then
+
+                        Try
+                            MPSync_process.logStats("MPSync: [UpdateRecords_mpsync] UPDATE " & table & " SET " & updvalues & " WHERE " & where, "DEBUG")
+                            SQLcommand.CommandText = "UPDATE " & table & " SET " & updvalues & " WHERE " & where
+                            SQLcommand.ExecuteNonQuery()
+                        Catch ex As Exception
+                            MPSync_process.logStats("MPSync: [UpdateRecords_mpsync] SQL statement [" & (SQLcommand.CommandText).Replace("""", "'") & "] on " & path & database & " failed with exception: " & ex.Message, "DEBUG")
+                            MPSync_process.logStats("MPSync: [UpdateRecords_mpsync] Error synchronizing table " & table & " in database " & path & database, "ERROR")
+                        End Try
+
                     End If
                 End If
+
             Next
 
-            fields = Left(fields, Len(fields) - 1)
-            where = Left(where, Len(where) - 1)
-
-            ' get update values from table and compare if anything changed
-            Dim curvalues() As String
-
-            curvalues = getCurrentTableValues(path, database, table, columns, updcols, pkey, fields, where)
-
-            If curvalues IsNot Nothing Then
-
-                ' construct update clause
-                updvalues = getUpdateValues(update, curvalues)
-
-                If updvalues <> Nothing Then
-
-                    Try
-                        MPSync_process.logStats("MPSync: [UpdateRecords_mpsync] UPDATE " & table & " SET " & updvalues & " WHERE " & where, "DEBUG")
-                        SQLcommand.CommandText = "UPDATE " & table & " SET " & updvalues & " WHERE " & where
-                        SQLcommand.ExecuteNonQuery()
-                    Catch ex As Exception
-                        MPSync_process.logStats("MPSync: [UpdateRecords_mpsync] SQL statement [" & (SQLcommand.CommandText).Replace("""", "'") & "] on " & path & database & " failed with exception: " & ex.Message, "DEBUG")
-                        MPSync_process.logStats("MPSync: [UpdateRecords_mpsync] Error synchronizing table " & table & " in database " & path & database, "ERROR")
-                    End Try
-
-                End If
-            End If
-
-        Next
-
-        SQLconnect.Close()
+        End Using
 
     End Sub
 
@@ -1103,55 +1107,54 @@ Public Class MPSync_process_DB
 
             MPSync_process.logStats("MPSync: [InsertRecords] adding missing entries on target for table " & table & " in database " & t_path & database, "DEBUG")
 
-            Dim SQLconnect As New SQLiteConnection()
-            Dim SQLmemory As New SQLiteConnection()
-            Dim SQLcommand As SQLiteCommand = SQLmemory.CreateCommand
-            Dim pkey As String = Nothing
-            Dim y As Integer = 0
+            Using SQLconnect As New SQLiteConnection(),
+                SQLmemory As New SQLiteConnection(),
+                SQLcommand As SQLiteCommand = SQLmemory.CreateCommand
 
-            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(s_path & database) & ";Read Only=True;"
-            SQLconnect.Open()
+                Dim pkey As String = Nothing
+                Dim y As Integer = 0
 
-            SQLmemory.ConnectionString = "Data Source=:memory:"
-            SQLmemory.Open()
+                SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(s_path & database) & ";Read Only=True;"
+                SQLconnect.Open()
 
-            SQLconnect.BackupDatabase(SQLmemory, "main", "main", -1, Nothing, 0)
+                SQLmemory.ConnectionString = "Data Source=:memory:"
+                SQLmemory.Open()
 
-            SQLconnect.Close()
-            SQLconnect.Dispose()
+                SQLconnect.BackupDatabase(SQLmemory, "main", "main", -1, Nothing, 0)
 
-            SQLcommand.CommandText = "PRAGMA temp_store=2;PRAGMA journal_mode=off;PRAGMA synchronous=off;"
-            SQLcommand.ExecuteNonQuery()
-            SQLcommand.CommandText = "ATTACH DATABASE '" & MPSync_process.p_Database(t_path & database) & "' AS target"
-            SQLcommand.ExecuteNonQuery()
+                SQLconnect.Close()
+                SQLconnect.Dispose()
 
-            Try
-                If getPK(columns, pkey) = -1 Then pkey = columns(0).name
-
-                Dim cols As String = GetColumnsToCheck(table, columns)
-                SQLcommand.CommandText = "INSERT INTO target." & table & " SELECT * FROM " & table &
-                    " WHERE " & pkey & " in ( SELECT " & pkey & " FROM ( SELECT " & cols & " FROM " & table & " EXCEPT SELECT " & cols & " FROM target." & table & ") )"
-
-                MPSync_process.logStats("MPSync: [InsertRecords] " & SQLcommand.CommandText, "DEBUG")
-
+                SQLcommand.CommandText = "PRAGMA temp_store=2;PRAGMA journal_mode=off;PRAGMA synchronous=off;"
+                SQLcommand.ExecuteNonQuery()
+                SQLcommand.CommandText = "ATTACH DATABASE '" & MPSync_process.p_Database(t_path & database) & "' AS target"
                 SQLcommand.ExecuteNonQuery()
 
-                SQLcommand.CommandText = "SELECT CASE WHEN MAX(CHANGES()) IS NULL THEN 0 ELSE MAX(CHANGES()) END FROM target." & table
-                Dim SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
-                SQLreader.Read()
-                y = SQLreader.GetInt32(0)
-                SQLreader.Close()
+                Try
+                    If getPK(columns, pkey) = -1 Then pkey = columns(0).name
 
-                MPSync_process.logStats("MPSync: [InsertRecords] " & y.ToString & " records added in " & table & " in database " & t_path & database, "DEBUG")
-            Catch ex As Exception
-                MPSync_process.logStats("MPSync: [InsertRecords] SQL statement [" & (SQLcommand.CommandText).Replace("""", "'") & "] on " & t_path & database & " failed with exception: " & ex.Message, "DEBUG")
-                MPSync_process.logStats("MPSync: [InsertRecords] Error adding record to table " & table & " in database " & t_path & database & " with exception: " & ex.Message, "ERROR")
-                rtc = False
-            End Try
+                    Dim cols As String = GetColumnsToCheck(table, columns)
+                    SQLcommand.CommandText = "INSERT INTO target." & table & " SELECT * FROM " & table &
+                        " WHERE " & pkey & " in ( SELECT " & pkey & " FROM ( SELECT " & cols & " FROM " & table & " EXCEPT SELECT " & cols & " FROM target." & table & ") )"
 
-            SQLmemory.Close()
-            SQLmemory.Dispose()
+                    MPSync_process.logStats("MPSync: [InsertRecords] " & SQLcommand.CommandText, "DEBUG")
 
+                    SQLcommand.ExecuteNonQuery()
+
+                    SQLcommand.CommandText = "SELECT CASE WHEN MAX(CHANGES()) IS NULL THEN 0 ELSE MAX(CHANGES()) END FROM target." & table
+                    Using SQLreader = SQLcommand.ExecuteReader()
+                        SQLreader.Read()
+                        y = SQLreader.GetInt32(0)
+                    End Using
+
+                    MPSync_process.logStats("MPSync: [InsertRecords] " & y.ToString & " records added in " & table & " in database " & t_path & database, "DEBUG")
+                Catch ex As Exception
+                    MPSync_process.logStats("MPSync: [InsertRecords] SQL statement [" & (SQLcommand.CommandText).Replace("""", "'") & "] on " & t_path & database & " failed with exception: " & ex.Message, "DEBUG")
+                    MPSync_process.logStats("MPSync: [InsertRecords] Error adding record to table " & table & " in database " & t_path & database & " with exception: " & ex.Message, "ERROR")
+                    rtc = False
+                End Try
+
+            End Using
         End If
 
         Return rtc
@@ -1171,53 +1174,53 @@ Public Class MPSync_process_DB
 
             MPSync_process.logStats("MPSync: [DeleteRecords] deleting extra entries on target for table " & table & " in database " & t_path & database, "DEBUG")
 
-            Dim SQLconnect As New SQLiteConnection()
-            Dim SQLmemory As New SQLiteConnection()
-            Dim SQLcommand As SQLiteCommand = SQLmemory.CreateCommand
-            Dim pkey As String = Nothing
-            Dim y As Integer = 0
+            Using SQLconnect As New SQLiteConnection(),
+                SQLmemory As New SQLiteConnection(),
+                SQLcommand As SQLiteCommand = SQLmemory.CreateCommand
 
-            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(s_path & database) & ";Read Only=True;"
-            SQLconnect.Open()
+                Dim pkey As String = Nothing
+                Dim y As Integer = 0
 
-            SQLmemory.ConnectionString = "Data Source=:memory:"
-            SQLmemory.Open()
+                SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(s_path & database) & ";Read Only=True;"
+                SQLconnect.Open()
 
-            SQLconnect.BackupDatabase(SQLmemory, "main", "main", -1, Nothing, 0)
+                SQLmemory.ConnectionString = "Data Source=:memory:"
+                SQLmemory.Open()
 
-            SQLconnect.Close()
-            SQLconnect.Dispose()
+                SQLconnect.BackupDatabase(SQLmemory, "main", "main", -1, Nothing, 0)
 
-            SQLcommand.CommandText = "PRAGMA temp_store=2;PRAGMA journal_mode=off;PRAGMA synchronous=off;"
-            SQLcommand.ExecuteNonQuery()
-            SQLcommand.CommandText = "ATTACH DATABASE '" & MPSync_process.p_Database(t_path & database) & "' AS target"
-            SQLcommand.ExecuteNonQuery()
+                SQLconnect.Close()
+                SQLconnect.Dispose()
 
-            Try
-                If getPK(columns, pkey) = -1 Then pkey = columns(0).name
-
-                Dim cols As String = GetColumnsToCheck(table, columns)
-                SQLcommand.CommandText = "DELETE FROM target." & table & " WHERE " & pkey & " IN (SELECT " & pkey & " FROM (SELECT " & cols & " FROM target." & table & " EXCEPT SELECT " & cols & " FROM " & table & "))"
-
-                MPSync_process.logStats("MPSync: [DeleteRecords] " & SQLcommand.CommandText, "DEBUG")
-
+                SQLcommand.CommandText = "PRAGMA temp_store=2;PRAGMA journal_mode=off;PRAGMA synchronous=off;"
+                SQLcommand.ExecuteNonQuery()
+                SQLcommand.CommandText = "ATTACH DATABASE '" & MPSync_process.p_Database(t_path & database) & "' AS target"
                 SQLcommand.ExecuteNonQuery()
 
-                SQLcommand.CommandText = "SELECT CASE WHEN MAX(CHANGES()) IS NULL THEN 0 ELSE MAX(CHANGES()) END FROM target." & table
-                Dim SQLreader As SQLiteDataReader = SQLcommand.ExecuteReader()
-                SQLreader.Read()
-                y = SQLreader.GetInt32(0)
-                SQLreader.Close()
+                Try
+                    If getPK(columns, pkey) = -1 Then pkey = columns(0).name
 
-                MPSync_process.logStats("MPSync: [DeleteRecords] " & y.ToString & " records deleted from " & table & " in database " & t_path & database, "DEBUG")
-            Catch ex As Exception
-                MPSync_process.logStats("MPSync: [DeleteRecords] SQL statement [" & (SQLcommand.CommandText).Replace("""", "'") & "] on " & t_path & database & " failed with exception: " & ex.Message, "DEBUG")
-                MPSync_process.logStats("MPSync: Error [DeleteRecords] deleting records from table " & table & " in database " & t_path & database & " with exception: " & ex.Message, "ERROR")
-                rtc = False
-            End Try
+                    Dim cols As String = GetColumnsToCheck(table, columns)
+                    SQLcommand.CommandText = "DELETE FROM target." & table & " WHERE " & pkey & " IN (SELECT " & pkey & " FROM (SELECT " & cols & " FROM target." & table & " EXCEPT SELECT " & cols & " FROM " & table & "))"
 
-            SQLmemory.Close()
-            SQLmemory.Dispose()
+                    MPSync_process.logStats("MPSync: [DeleteRecords] " & SQLcommand.CommandText, "DEBUG")
+
+                    SQLcommand.ExecuteNonQuery()
+
+                    SQLcommand.CommandText = "SELECT CASE WHEN MAX(CHANGES()) IS NULL THEN 0 ELSE MAX(CHANGES()) END FROM target." & table
+                    Using SQLreader = SQLcommand.ExecuteReader()
+                        SQLreader.Read()
+                        y = SQLreader.GetInt32(0)
+                    End Using
+
+                    MPSync_process.logStats("MPSync: [DeleteRecords] " & y.ToString & " records deleted from " & table & " in database " & t_path & database, "DEBUG")
+                Catch ex As Exception
+                    MPSync_process.logStats("MPSync: [DeleteRecords] SQL statement [" & (SQLcommand.CommandText).Replace("""", "'") & "] on " & t_path & database & " failed with exception: " & ex.Message, "DEBUG")
+                    MPSync_process.logStats("MPSync: Error [DeleteRecords] deleting records from table " & table & " in database " & t_path & database & " with exception: " & ex.Message, "ERROR")
+                    rtc = False
+                End Try
+
+            End Using
 
         End If
 
@@ -1229,24 +1232,24 @@ Public Class MPSync_process_DB
 
         If data.OfType(Of String)().ToArray().Length = 0 Or data(0, 0) = Nothing Then Exit Sub
 
-        Dim SQLconnect As New SQLiteConnection()
-        Dim SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+        Using SQLconnect As New SQLiteConnection(),
+            SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-        SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database)
-        SQLconnect.Open()
+            SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(path & database)
+            SQLconnect.Open()
 
-        Try
-            For y = 0 To UBound(data, 2)
-                MPSync_process.logStats("MPSync: [Cleanup_mpsync] DELETE FROM mpsync WHERE rowid = " & data(0, y), "DEBUG")
-                SQLcommand.CommandText = "DELETE FROM mpsync WHERE rowid = " & data(0, y)
-                SQLcommand.ExecuteNonQuery()
-            Next
-        Catch ex As Exception
-            MPSync_process.logStats("MPSync: [Cleanup_mpsync] SQL statement [" & (SQLcommand.CommandText).Replace("""", "'") & "] failed with exception: " & ex.Message, "DEBUG")
-            MPSync_process.logStats("MPSync: [Cleanup_mpsync] Error deleting record from table mpsync in database " & path & database & " with exception: " & ex.Message, "ERROR")
-        End Try
+            Try
+                For y = 0 To UBound(data, 2)
+                    MPSync_process.logStats("MPSync: [Cleanup_mpsync] DELETE FROM mpsync WHERE rowid = " & data(0, y), "DEBUG")
+                    SQLcommand.CommandText = "DELETE FROM mpsync WHERE rowid = " & data(0, y)
+                    SQLcommand.ExecuteNonQuery()
+                Next
+            Catch ex As Exception
+                MPSync_process.logStats("MPSync: [Cleanup_mpsync] SQL statement [" & (SQLcommand.CommandText).Replace("""", "'") & "] failed with exception: " & ex.Message, "DEBUG")
+                MPSync_process.logStats("MPSync: [Cleanup_mpsync] Error deleting record from table mpsync in database " & path & database & " with exception: " & ex.Message, "ERROR")
+            End Try
 
-        SQLconnect.Close()
+        End Using
 
     End Sub
 
