@@ -315,15 +315,13 @@ Click Next to continue or Cancel to exit Setup.</Value>
       <Major>1</Major>
       <Minor>0</Minor>
       <Build>0</Build>
-      <Revision>23</Revision>
+      <Revision>24</Revision>
     </Version>
     <ExtensionDescription>This plugin synchronizes your MediaPortal databases with a central database as well as thumbs folder, so that any additons can by automatically applied to any other MP seat you might have in your household.</ExtensionDescription>
-    <VersionDescription>- Added some more logging and minor bug fixing
-- Bumping up SQLite version.
-- Now available as x86 and x64</VersionDescription>
+    <VersionDescription>- Fixed missing triggers</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=268&amp;cf_id=24</OnlineLocation>
-    <ReleaseDate>2024-03-23T21:26:41</ReleaseDate>
+    <ReleaseDate>2024-04-17T21:26:41</ReleaseDate>
     <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
     <PlatformCompatibility>AnyCPU</PlatformCompatibility>
     <Location>[Name]-v[Version].mpe1</Location>
@@ -414,21 +412,21 @@ Click Next to continue or Cancel to exit Setup.</Value>
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPSync.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e15323af-33c6-4e49-ae94-035bac1b73c5}-MPSync.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{8a36270c-eb35-4497-bafc-f81383cdc9a2}-MPSync.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPSync_logo.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{352c42b5-c762-4f01-97c3-ba6fd9ff1b9b}-MPSync_logo.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{43497d95-e973-4867-b86c-2f9ab2402319}-MPSync_logo.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true" Condition="None">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MP_Packaging.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{bb7802bd-0867-4ee9-86dc-96dae2603574}-MP_Packaging.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{31e4c41c-6c7d-4d85-9834-ad8422fcab5a}-MP_Packaging.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
