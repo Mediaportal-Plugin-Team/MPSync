@@ -13,9 +13,6 @@ jobs:
     name: CodeQL
     if: ${{ needs.changes.outputs.changes == 'true' }}
     uses: Mediaportal-Plugin-Team/Mediaportal-Tools/.github/workflows/codeql.yml@master
-    needs: 
-      - build
-      - changes
     permissions:
       security-events: write
     secrets: inherit
