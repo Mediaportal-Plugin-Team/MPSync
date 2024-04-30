@@ -79,11 +79,11 @@
   <ItemGroup>
     <Reference Include="Common.Utils, Version=1.5.100.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\Common.Utils.dll</HintPath>
+      <HintPath>..\..\External\Common.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Core, Version=1.5.100.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
+      <HintPath>..\..\External\Core.dll</HintPath>
       <Private>True</Private>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
@@ -104,7 +104,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="Utils, Version=1.5.100.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Team MediaPortal\MediaPortal\Utils.dll</HintPath>
+      <HintPath>..\..\External\Utils.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
