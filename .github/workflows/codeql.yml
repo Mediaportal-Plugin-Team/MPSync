@@ -1,17 +1,19 @@
-name: "CodeQL"
+name: CodeQL / MPSync Plugin
 
 on:
   push:
-    branches: [ "master" ]
+    branches: 
+      - master
   pull_request:
-    branches: [ "master" ]
+    branches: 
+      - master
   schedule:
     - cron: '20 2 * * 0'
+  workflow_dispatch:
 
 jobs:
   codeql:
     name: CodeQL
-    if: ${{ needs.changes.outputs.changes == 'true' }}
     uses: Mediaportal-Plugin-Team/Mediaportal-Tools/.github/workflows/codeql.yml@master
     permissions:
       security-events: write
