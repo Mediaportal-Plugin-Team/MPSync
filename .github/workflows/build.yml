@@ -88,6 +88,9 @@ jobs:
     name: CodeQL
     if: ${{ needs.changes.outputs.changes == 'true' }}
     uses: Mediaportal-Plugin-Team/Mediaportal-Tools/.github/workflows/codeql.yml@master
+    with:
+      nuget-restore: true
+      nuget-path: MPSync
     needs: 
       - build
       - changes
