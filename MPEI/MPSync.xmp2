@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PackageClass xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<PackageClass xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Version>2.0</Version>
   <Groups>
     <Items>
@@ -310,18 +310,18 @@ Click Next to continue or Cancel to exit Setup.</Value>
     <Author>m3rcury</Author>
     <HomePage>http://www.team-mediaportal.com/extensions/utilities/cdb-sync?lang=en</HomePage>
     <ForumPage>http://forum.team-mediaportal.com/threads/plugin-mpsync-mediaportal-synchronization.117417/#post-975411</ForumPage>
-    <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=268&amp;cf_id=52</UpdateUrl>
+    <UpdateUrl>https://raw.githubusercontent.com/Mediaportal-Plugin-Team/MPSync/master/MPEI/MPSync_update.xml</UpdateUrl>
     <Version>
       <Major>1</Major>
       <Minor>0</Minor>
-      <Build>0</Build>
-      <Revision>24</Revision>
+      <Build>5</Build>
+      <Revision>1</Revision>
     </Version>
     <ExtensionDescription>This plugin synchronizes your MediaPortal databases with a central database as well as thumbs folder, so that any additons can by automatically applied to any other MP seat you might have in your household.</ExtensionDescription>
     <VersionDescription>- Fixed missing triggers</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/Mediaportal-Plugin-Team/MPSync/releases/download/v[Version]/MPSync-[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2024-04-17T21:26:41</ReleaseDate>
+    <ReleaseDate>2024-05-16T21:26:41</ReleaseDate>
     <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
     <PlatformCompatibility>AnyCPU</PlatformCompatibility>
     <Location>[Name]-[Version].mpe1</Location>

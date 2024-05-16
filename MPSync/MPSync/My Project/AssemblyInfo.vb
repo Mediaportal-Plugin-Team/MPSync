@@ -13,7 +13,7 @@ Imports MediaPortal.Common.Utils
 <Assembly: AssemblyDescription("MediaPortal Synchroniser")> 
 <Assembly: AssemblyCompany("m3rcury")> 
 <Assembly: AssemblyProduct("MediaPortal Synchroniser")>
-<Assembly: AssemblyCopyright("Copyright ©  2013-2018")>
+<Assembly: AssemblyCopyright("Copyright ©  2013-2024")>
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)> 
@@ -37,5 +37,5 @@ Imports MediaPortal.Common.Utils
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("1.0.0.24")>
-<Assembly: AssemblyFileVersion("1.0.0.24")>
+<Assembly: AssemblyVersion("1.0.5.1")>
+<Assembly: AssemblyFileVersion("1.0.5.1")>
