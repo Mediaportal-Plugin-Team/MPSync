@@ -321,7 +321,7 @@ Click Next to continue or Cancel to exit Setup.</Value>
     <VersionDescription>- Fixed missing triggers</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/Mediaportal-Plugin-Team/MPSync/releases/download/v[Version]/MPSync-[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2024-05-16T21:26:41</ReleaseDate>
+    <ReleaseDate>2024-05-16T23:23:23</ReleaseDate>
     <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
     <PlatformCompatibility>AnyCPU</PlatformCompatibility>
     <Location>[Name]-[Version].mpe1</Location>

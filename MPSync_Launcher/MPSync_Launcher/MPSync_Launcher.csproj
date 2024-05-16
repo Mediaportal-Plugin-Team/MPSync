@@ -77,11 +77,11 @@
     <ApplicationIcon>MPSync.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Utils, Version=1.5.100.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Common.Utils">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\External\Common.Utils.dll</HintPath>
     </Reference>
-    <Reference Include="Core, Version=1.5.100.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Core">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\External\Core.dll</HintPath>
       <Private>True</Private>
@@ -102,7 +102,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Utils, Version=1.5.100.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Utils">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\External\Utils.dll</HintPath>
     </Reference>
