@@ -611,65 +611,69 @@ Public Class MPSync_process
     End Sub
 
     Private Sub bw_checkDB_worker(sender As System.Object, e As System.ComponentModel.DoWorkEventArgs)
+        Try
 
-        Dim check As String = "ok"
-        Dim parm() As String = Split(e.Argument, "|")
+            Dim check As String = "ok"
+            Dim parm() As String = Split(e.Argument, "|")
 
-        logStats("MPSync: [getDBInfo][bw_checkDB_worker] Checking integrity of database " & parm(0) & parm(1) & " in progress...", "LOG")
+            logStats("MPSync: [getDBInfo][bw_checkDB_worker] Checking integrity of database " & parm(0) & parm(1) & " in progress...", "LOG")
 
-        If IO.File.Exists(parm(0) & parm(1)) Then
-            Using SQLconnect As New SQLiteConnection(),
-                SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
-
-                Try
-                    SQLconnect.ConnectionString = "Data Source=" & p_Database(parm(0) & parm(1)) & ";Read Only=True;"
-                    SQLconnect.Open()
-                    SQLcommand.CommandText = "PRAGMA integrity_check;"
-                    Using SQLreader = SQLcommand.ExecuteReader()
-                        SQLreader.Read()
-                        check = SQLreader.GetString(0)
-                    End Using
-                Catch ex As Exception
-                    check = "error"
-                End Try
-            End Using
-
-            If check = "ok" And _vacuum Then
-                logStats("MPSync: [getDBInfo][bw_checkDB_worker] VACUUM of database " & parm(0) & parm(1) & " started.", "LOG")
-
+            If IO.File.Exists(parm(0) & parm(1)) Then
                 Using SQLconnect As New SQLiteConnection(),
                 SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+
                     Try
-                        SQLconnect.ConnectionString = "Data Source=" & p_Database(parm(0) & parm(1)) & ";"
+                        SQLconnect.ConnectionString = "Data Source=" & p_Database(parm(0) & parm(1)) & ";Read Only=True;"
                         SQLconnect.Open()
-                        SQLcommand.CommandText = "VACUUM;"
-                        SQLcommand.ExecuteNonQuery()
-                        logStats("MPSync: [getDBInfo][bw_checkDB_worker] VACUUM of database " & parm(0) & parm(1) & " complete.", "LOG")
+                        SQLcommand.CommandText = "PRAGMA integrity_check;"
+                        Using SQLreader = SQLcommand.ExecuteReader()
+                            SQLreader.Read()
+                            check = SQLreader.GetString(0)
+                        End Using
                     Catch ex As Exception
-                        logStats("MPSync: [getDBInfo][bw_checkDB_worker] VACUUM database " & parm(2) & " failed with exception: " & ex.Message, "ERROR")
+                        check = "error"
                     End Try
                 End Using
+
+                If check = "ok" And _vacuum Then
+                    logStats("MPSync: [getDBInfo][bw_checkDB_worker] VACUUM of database " & parm(0) & parm(1) & " started.", "LOG")
+
+                    Using SQLconnect As New SQLiteConnection(),
+                SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
+                        Try
+                            SQLconnect.ConnectionString = "Data Source=" & p_Database(parm(0) & parm(1)) & ";"
+                            SQLconnect.Open()
+                            SQLcommand.CommandText = "VACUUM;"
+                            SQLcommand.ExecuteNonQuery()
+                            logStats("MPSync: [getDBInfo][bw_checkDB_worker] VACUUM of database " & parm(0) & parm(1) & " complete.", "LOG")
+                        Catch ex As Exception
+                            logStats("MPSync: [getDBInfo][bw_checkDB_worker] VACUUM database " & parm(2) & " failed with exception: " & ex.Message, "ERROR")
+                        End Try
+                    End Using
+                End If
+
+                If check <> "ok" Then IO.File.Delete(parm(0) & parm(1))
+
             End If
 
-            If check <> "ok" Then IO.File.Delete(parm(0) & parm(1))
+            Try
+                If Not IO.File.Exists(parm(0) & parm(1)) Then
+                    logStats("MPSync: Copying database " & parm(2) & " to target.", "LOG")
+                    IO.File.Copy(parm(2), parm(0) & parm(1), True)
+                    Drop_Triggers(parm(0), parm(1), "mpsync_update|mpsync_watch")
+                    check = "copied database from source"
+                End If
+            Catch ex As Exception
+                logStats("MPSync: [getDBInfo][bw_checkDB_worker] Error while copying database " & parm(2) & " with exception: " & ex.Message, "ERROR")
+            End Try
 
-        End If
+            logStats("MPSync: [getDBInfo][bw_checkDB_worker] Checking integrity of database " & parm(0) & parm(1) & " complete - Status: " & check, "LOG")
 
-        Try
-            If Not IO.File.Exists(parm(0) & parm(1)) Then
-                logStats("MPSync: Copying database " & parm(2) & " to target.", "LOG")
-                IO.File.Copy(parm(2), parm(0) & parm(1), True)
-                Drop_Triggers(parm(0), parm(1), "mpsync_update|mpsync_watch")
-                check = "copied database from source"
-            End If
+            bw_threads -= 1
+            bw_dbs.RemoveAt(bw_dbs.IndexOf(parm(1)))
         Catch ex As Exception
-            logStats("MPSync: [getDBInfo][bw_checkDB_worker] Error while copying database " & parm(2) & " with exception: " & ex.Message, "ERROR")
+            logStats("MPSync: [getDBInfo][bw_checkDB_worker] Unexpected error " & ex.Message, "ERROR")
         End Try
-
-        logStats("MPSync: [getDBInfo][bw_checkDB_worker] Checking integrity of database " & parm(0) & parm(1) & " complete - Status: " & check, "LOG")
-
-        bw_threads -= 1
-        bw_dbs.RemoveAt(bw_dbs.IndexOf(parm(1)))
 
     End Sub
 

@@ -461,43 +461,47 @@ Public Class MPSync_process_DB
     End Function
 
     Public Shared Sub bw_db_worker(sender As System.Object, e As System.ComponentModel.DoWorkEventArgs)
+        Try
+            Dim mps_db As New MPSync_process_DB
 
-        Dim mps_db As New MPSync_process_DB
+            Do
 
-        Do
+                If Not MPSync_process.CheckPlayerplaying("db") Then
 
-            If Not MPSync_process.CheckPlayerplaying("db") Then
+                    MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_db_worker] DB synchronization cycle starting.", "LOG")
 
-                MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_db_worker] DB synchronization cycle starting.", "LOG")
+                    mps_db.bw_sync_db_jobs = 0
+                    Array.Resize(mps_db.bw_sync_db, 0)
 
-                mps_db.bw_sync_db_jobs = 0
-                Array.Resize(mps_db.bw_sync_db, 0)
+                    ' direction is client to server or both
+                    If MPSync_process._db_direction <> 2 Then
+                        mps_db.Process_DB_folder(MPSync_process._db_client, MPSync_process._db_server)
+                    End If
 
-                ' direction is client to server or both
-                If MPSync_process._db_direction <> 2 Then
-                    mps_db.Process_DB_folder(MPSync_process._db_client, MPSync_process._db_server)
-                End If
+                    ' direction is server to client or both
+                    If MPSync_process._db_direction <> 1 Then
+                        mps_db.Process_DB_folder(MPSync_process._db_server, MPSync_process._db_client)
+                    End If
 
-                ' direction is server to client or both
-                If MPSync_process._db_direction <> 1 Then
-                    mps_db.Process_DB_folder(MPSync_process._db_server, MPSync_process._db_client)
-                End If
+                    If Not MPSync_settings.syncnow Then
+                        MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_db_worker] DB synchronization cycle complete.", "LOG")
+                    Else
+                        MPSync_settings.db_complete = True
+                        MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_db_worker] DB synchronization complete.", "INFO")
+                        Exit Do
+                    End If
 
-                If Not MPSync_settings.syncnow Then
-                    MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_db_worker] DB synchronization cycle complete.", "LOG")
+                    MPSync_process.wait(MPSync_process._db_sync, , "DB")
+
                 Else
-                    MPSync_settings.db_complete = True
-                    MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_db_worker] DB synchronization complete.", "INFO")
-                    Exit Do
+                    MPSync_process.wait(5, False)
                 End If
 
-                MPSync_process.wait(MPSync_process._db_sync, , "DB")
+            Loop
 
-            Else
-                MPSync_process.wait(5, False)
-            End If
-
-        Loop
+        Catch ex As Exception
+            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_db_worker] Unexpected error " & ex.Message, "ERROR")
+        End Try
 
     End Sub
 
