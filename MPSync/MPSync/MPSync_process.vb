@@ -455,46 +455,52 @@ Public Class MPSync_process
 
         If debug Then MPSync_process.logStats("MPSync: [TableExist] Check if table " & table & " in database " & path & database & " exists.", "DEBUG")
 
-        Dim exist As Boolean = False
+        Try
 
-        Using SQLconnect As New SQLiteConnection(),
+            Dim exist As Boolean = False
+
+            Using SQLconnect As New SQLiteConnection(),
             SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
-            SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
+                SQLconnect.ConnectionString = "Data Source=" & p_Database(path & database)
 
-            If Not dropifempty Then SQLconnect.ConnectionString += ";Read Only=True;"
+                If Not dropifempty Then SQLconnect.ConnectionString += ";Read Only=True;"
 
-            SQLconnect.Open()
-            SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='" & table & "'"
-            Using SQLreader = SQLcommand.ExecuteReader()
+                SQLconnect.Open()
+                SQLcommand.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='" & table & "'"
+                Using SQLreader = SQLcommand.ExecuteReader()
 
-                While SQLreader.Read()
-                    exist = True
-                End While
+                    While SQLreader.Read()
+                        exist = True
+                    End While
+
+                End Using
+
+                If exist And dropifempty Then
+                    SQLcommand.CommandText = "SELECT COUNT(*) FROM " & table
+                    Using SQLreader = SQLcommand.ExecuteReader()
+                        SQLreader.Read()
+
+                        If Int(SQLreader(0)) = 0 Then
+                            SQLreader.Close()
+                            SQLcommand.CommandText = "DROP TABLE " & table
+                            Try
+                                SQLcommand.ExecuteNonQuery()
+                                exist = False
+                            Catch ex As Exception
+                                logStats("MPSync: [TableExist] Table not dropped with exception - " & ex.Message, "ERROR")
+                            End Try
+                        End If
+                    End Using
+                End If
 
             End Using
 
-            If exist And dropifempty Then
-                SQLcommand.CommandText = "SELECT COUNT(*) FROM " & table
-                Using SQLreader = SQLcommand.ExecuteReader()
-                    SQLreader.Read()
+            Return exist
 
-                    If Int(SQLreader(0)) = 0 Then
-                        SQLreader.Close()
-                        SQLcommand.CommandText = "DROP TABLE " & table
-                        Try
-                            SQLcommand.ExecuteNonQuery()
-                            exist = False
-                        Catch ex As Exception
-                            logStats("MPSync: [TableExist] Table not dropped with exception - " & ex.Message, "ERROR")
-                        End Try
-                    End If
-                End Using
-            End If
-
-        End Using
-
-        Return exist
+        Catch ex As Exception
+            logStats("MPSync: [TableExist] Unexpected error " & ex.Message, "ERROR")
+        End Try
 
     End Function
 
