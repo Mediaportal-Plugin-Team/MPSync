@@ -879,37 +879,44 @@ Public Class MPSync_process_DB
 
     Private Sub bw_sync_db_worker(sender As System.Object, e As System.ComponentModel.DoWorkEventArgs)
 
-        If e.Argument.GetType() Is GetType(SyncDbParams) Then
-            Dim parm As SyncDbParams = CType(e.Argument, SyncDbParams)
+        Try
 
-            MPSync_process.logStats("MPSync: [ProcessTables][bw_sync_db_worker] background synchronization of " & parm.tables(0).database & " database started.", "LOG")
+            If e.Argument.GetType() Is GetType(SyncDbParams) Then
+                Dim parm As SyncDbParams = CType(e.Argument, SyncDbParams)
 
-            Dim x As Integer
+                MPSync_process.logStats("MPSync: [ProcessTables][bw_sync_db_worker] background synchronization of " & parm.tables(0).database & " database started.", "LOG")
 
-            For x = 0 To parm.tables.Count - 1
-                db_worker(parm.tables(x).source, parm.tables(x).target, parm.tables(x).database, parm.tables(x).name)
-            Next
+                Dim x As Integer
 
-            If MPSync_process.sync_type = "Timestamp" Then
+                For x = 0 To parm.tables.Count - 1
+                    db_worker(parm.tables(x).source, parm.tables(x).target, parm.tables(x).database, parm.tables(x).name)
+                Next
 
-                Dim s_lastwrite As Date = My.Computer.FileSystem.GetFileInfo(parm.tables(0).source & parm.tables(0).database).LastWriteTimeUtc
-                Dim t_lastwrite As Date = My.Computer.FileSystem.GetFileInfo(parm.tables(0).target & parm.tables(0).database).LastWriteTimeUtc
+                If MPSync_process.sync_type = "Timestamp" Then
 
-                x = Array.IndexOf(MPSync_process.dbname, parm.tables(0).database)
+                    Dim s_lastwrite As Date = My.Computer.FileSystem.GetFileInfo(parm.tables(0).source & parm.tables(0).database).LastWriteTimeUtc
+                    Dim t_lastwrite As Date = My.Computer.FileSystem.GetFileInfo(parm.tables(0).target & parm.tables(0).database).LastWriteTimeUtc
 
-                If s_lastwrite > t_lastwrite Then
-                    MPSync_process.dbinfo(x).LastWriteTimeUtc = s_lastwrite
-                ElseIf s_lastwrite < t_lastwrite Then
-                    MPSync_process.dbinfo(x).LastWriteTimeUtc = t_lastwrite
+                    x = Array.IndexOf(MPSync_process.dbname, parm.tables(0).database)
+
+                    If s_lastwrite > t_lastwrite Then
+                        MPSync_process.dbinfo(x).LastWriteTimeUtc = s_lastwrite
+                    ElseIf s_lastwrite < t_lastwrite Then
+                        MPSync_process.dbinfo(x).LastWriteTimeUtc = t_lastwrite
+                    End If
+
                 End If
 
+                _bw_active_db_jobs -= 1
+                bw_dbs.RemoveAt(bw_dbs.IndexOf(parm.tables(0).database))
+
+                MPSync_process.logStats("MPSync: [ProcessTables][bw_sync_db_worker] background synchronization of " & parm.tables(0).database & " database completed.", "LOG")
             End If
 
-            _bw_active_db_jobs -= 1
-            bw_dbs.RemoveAt(bw_dbs.IndexOf(parm.tables(0).database))
 
-            MPSync_process.logStats("MPSync: [ProcessTables][bw_sync_db_worker] background synchronization of " & parm.tables(0).database & " database completed.", "LOG")
-        End If
+        Catch ex As Exception
+            MPSync_process.logStats("MPSync: [ProcessTables][bw_sync_db_worker] Unexpected error " & ex.Message, "ERROR")
+        End Try
 
     End Sub
 

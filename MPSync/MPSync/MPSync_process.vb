@@ -585,6 +585,8 @@ Public Class MPSync_process
                         bw_checkDB(x) = New BackgroundWorker
                         bw_checkDB(x).WorkerSupportsCancellation = True
                         AddHandler bw_checkDB(x).DoWork, AddressOf bw_checkDB_worker
+                        AddHandler bw_checkDB(x).RunWorkerCompleted, AddressOf bw_checkDB_exception
+
                         bw_checkDB(x).RunWorkerAsync(target & "|" & dbname(x) & "|" & database & "|" & source)
 
                         x += 1
@@ -607,6 +609,14 @@ Public Class MPSync_process
         Loop
 
         logStats("MPSync: [getDBInfo] Background threads for database integrity checking complete.", "DEBUG")
+
+    End Sub
+
+    Private Sub bw_checkDB_exception(sender As System.Object, e As RunWorkerCompletedEventArgs)
+
+        If e.Error IsNot Nothing Then
+            logStats("MPSync: [getDBInfo] Exception " & e.Error.Message, "ERROR")
+        End If
 
     End Sub
 
@@ -862,42 +872,54 @@ Public Class MPSync_process
 
     Private Sub bw_watchtriggers_worker(sender As System.Object, e As System.ComponentModel.DoWorkEventArgs)
 
-        Dim parm() As String = Split(e.Argument, "|")
+        Try
 
-        logStats("MPSync: [checkTriggers][bw_watchtriggers_worker] Background watch trigger thread on database " & parm(1) & " for " & parm(0) & " started.", "DEBUG")
+            Dim parm() As String = Split(e.Argument, "|")
 
-        If parm(0) = "ADD" Then
-            Create_Watch_Tables(_db_client, parm(1))
-            Create_Watch_Tables(_db_server, parm(1))
-            Drop_Triggers(_db_client, parm(1), "mpsync_update|mpsync_watch")
-            If _db_direction <> 1 Then
-                Create_Watch_Triggers(_db_client, parm(1))
+            logStats("MPSync: [checkTriggers][bw_watchtriggers_worker] Background watch trigger thread on database " & parm(1) & " for " & parm(0) & " started.", "DEBUG")
+
+            If parm(0) = "ADD" Then
+                Create_Watch_Tables(_db_client, parm(1))
+                Create_Watch_Tables(_db_server, parm(1))
+                Drop_Triggers(_db_client, parm(1), "mpsync_update|mpsync_watch")
+                If _db_direction <> 1 Then
+                    Create_Watch_Triggers(_db_client, parm(1))
+                End If
+            ElseIf parm(0) = "DROP" Then
+                Drop_Watch_Tables(_db_client, parm(1))
+                Drop_Triggers(_db_client, parm(1), "mpsync_update|mpsync_watch")
             End If
-        ElseIf parm(0) = "DROP" Then
-            Drop_Watch_Tables(_db_client, parm(1))
-            Drop_Triggers(_db_client, parm(1), "mpsync_update|mpsync_watch")
-        End If
 
-        bw_threads -= 1
-        bw_dbs.RemoveAt(bw_dbs.LastIndexOf(parm(1)))
+            bw_threads -= 1
+            bw_dbs.RemoveAt(bw_dbs.LastIndexOf(parm(1)))
 
-        logStats("MPSync: [checkTriggers][bw_watchtriggers_worker] Background watch trigger thread on database " & parm(1) & " for " & parm(0) & " complete.", "DEBUG")
+            logStats("MPSync: [checkTriggers][bw_watchtriggers_worker] Background watch trigger thread on database " & parm(1) & " for " & parm(0) & " complete.", "DEBUG")
+
+        Catch ex As Exception
+            logStats("MPSync: [checkTriggers][bw_watchtriggers_worker] Unexpected error " & ex.Message, "ERROR")
+        End Try
 
     End Sub
 
     Private Sub bw_worktriggers_worker(sender As System.Object, e As System.ComponentModel.DoWorkEventArgs)
 
-        Dim parm() As String = Split(e.Argument, "|")
+        Try
 
-        logStats("MPSync: [checkTriggers][bw_worktriggers_worker] Background work trigger thread on database " & parm(1) & " started.", "DEBUG")
+            Dim parm() As String = Split(e.Argument, "|")
 
-        If parm(0) = "DROP" Then Drop_Triggers(IO.Path.GetDirectoryName(parm(1)) & "\", IO.Path.GetFileName(parm(1)), "mpsync_work")
-        If parm(0) = "ADD" Then Create_Sync_Triggers(parm(1))
+            logStats("MPSync: [checkTriggers][bw_worktriggers_worker] Background work trigger thread on database " & parm(1) & " started.", "DEBUG")
 
-        bw_threads -= 1
-        bw_dbs.RemoveAt(bw_dbs.LastIndexOf(parm(1)))
+            If parm(0) = "DROP" Then Drop_Triggers(IO.Path.GetDirectoryName(parm(1)) & "\", IO.Path.GetFileName(parm(1)), "mpsync_work")
+            If parm(0) = "ADD" Then Create_Sync_Triggers(parm(1))
 
-        logStats("MPSync: [checkTriggers][bw_worktriggers_worker] Background work trigger thread on database " & parm(1) & " complete.", "DEBUG")
+            bw_threads -= 1
+            bw_dbs.RemoveAt(bw_dbs.LastIndexOf(parm(1)))
+
+            logStats("MPSync: [checkTriggers][bw_worktriggers_worker] Background work trigger thread on database " & parm(1) & " complete.", "DEBUG")
+
+        Catch ex As Exception
+            logStats("MPSync: [checkTriggers][bw_worktriggers_worker] Unexpected error " & ex.Message, "ERROR")
+        End Try
 
     End Sub
 

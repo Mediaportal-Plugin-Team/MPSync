@@ -15,96 +15,106 @@ Public Class MPSync_process_Folders
 
     Public Shared Sub bw_folders_worker(sender As System.Object, e As System.ComponentModel.DoWorkEventArgs)
 
-        Dim mps_folders As New MPSync_process_Folders
+        Try
+            Dim mps_folders As New MPSync_process_Folders
 
-        MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] Folders synchronization started.", "INFO")
+            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] Folders synchronization started.", "INFO")
 
-        Dim x As Integer = -1
-        Dim process_thread() As Thread = Nothing
-        Dim item As Array
-        Dim list As Array = MPSync_process.p_object_list
+            Dim x As Integer = -1
+            Dim process_thread() As Thread = Nothing
+            Dim item As Array
+            Dim list As Array = MPSync_process.p_object_list
 
-        _bw_active_fl_jobs = 0
+            _bw_active_fl_jobs = 0
 
-        ' populate the CRC32 table
-        createCRC32table()
+            ' populate the CRC32 table
+            createCRC32table()
 
-        For Each obj As String In list
+            For Each obj As String In list
 
-            item = Split(obj, "¬")
+                item = Split(obj, "¬")
 
-            If item(1) = "True" Then
-                ' check if there are available threads to submit current stream, unless there is no limit.
+                If item(1) = "True" Then
+                    ' check if there are available threads to submit current stream, unless there is no limit.
 
-                If MPSync_process.checkThreads("folders") <> -1 Then
+                    If MPSync_process.checkThreads("folders") <> -1 Then
 
-                    Do While _bw_active_fl_jobs >= MPSync_process.checkThreads("folders")
-                        MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] waiting for available threads.", "DEBUG")
-                        MPSync_process.wait(30, False)
-                    Loop
+                        Do While _bw_active_fl_jobs >= MPSync_process.checkThreads("folders")
+                            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] waiting for available threads.", "DEBUG")
+                            MPSync_process.wait(30, False)
+                        Loop
 
-                End If
-
-                _bw_active_fl_jobs += 1
-
-                x += 1
-
-                ReDim Preserve mps_folders.foldertypes(x), mps_folders.s_paths(x), mps_folders.t_paths(x)
-                mps_folders.foldertypes(x) = UCase(item(0))
-
-                ReDim Preserve process_thread(x)
-                process_thread(x) = New Thread(AddressOf mps_folders.folders_processing)
-                process_thread(x).Start(item(0))
-            End If
-
-        Next
-
-        If x <> -1 Then
-
-            Dim active As Boolean = True
-
-            Do Until active = False
-
-                active = False
-
-                For y As Integer = 0 To x
-
-                    If process_thread(y).IsAlive Then
-                        active = True
-                        Exit For
                     End If
 
-                Next
+                    _bw_active_fl_jobs += 1
 
-                If _bw_active_fl_jobs > 0 Then
-                    If MPSync_process.p_Debug Then MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] waiting for background threads to finish... " & _bw_active_fl_jobs.ToString & " threads remaining processing.", "DEBUG")
-                    MPSync_process.wait(10, False)
+                    x += 1
+
+                    ReDim Preserve mps_folders.foldertypes(x), mps_folders.s_paths(x), mps_folders.t_paths(x)
+                    mps_folders.foldertypes(x) = UCase(item(0))
+
+                    ReDim Preserve process_thread(x)
+                    process_thread(x) = New Thread(AddressOf mps_folders.folders_processing)
+                    process_thread(x).Start(item(0))
                 End If
 
-            Loop
+            Next
 
-        End If
+            If x <> -1 Then
 
-        If MPSync_settings.syncnow Then MPSync_settings.folders_complete = True
+                Dim active As Boolean = True
 
-        MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] Folders synchronization complete.", "INFO")
+                Do Until active = False
+
+                    active = False
+
+                    For y As Integer = 0 To x
+
+                        If process_thread(y).IsAlive Then
+                            active = True
+                            Exit For
+                        End If
+
+                    Next
+
+                    If _bw_active_fl_jobs > 0 Then
+                        If MPSync_process.p_Debug Then MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] waiting for background threads to finish... " & _bw_active_fl_jobs.ToString & " threads remaining processing.", "DEBUG")
+                        MPSync_process.wait(10, False)
+                    End If
+
+                Loop
+
+            End If
+
+            If MPSync_settings.syncnow Then MPSync_settings.folders_complete = True
+
+            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] Folders synchronization complete.", "INFO")
+
+        Catch ex As Exception
+            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] Unexpected error " & ex.Message, "ERROR")
+        End Try
 
     End Sub
 
     Private Sub folders_processing(ByVal foldertype As String)
 
-        Dim folders_client As String = Nothing
-        Dim folders_server As String = Nothing
-        Dim folders() As String = Nothing
-        Dim folders_direction As Integer = Nothing
-        Dim folders_sync_method As Integer = Nothing
-        Dim folders_pause As Boolean = False
-        Dim folders_md5 As Boolean = False
-        Dim folders_crc32 As Boolean = False
+        Try
+            Dim folders_client As String = Nothing
+            Dim folders_server As String = Nothing
+            Dim folders() As String = Nothing
+            Dim folders_direction As Integer = Nothing
+            Dim folders_sync_method As Integer = Nothing
+            Dim folders_pause As Boolean = False
+            Dim folders_md5 As Boolean = False
+            Dim folders_crc32 As Boolean = False
 
-        MPSync_process.getObjectSettings(foldertype, folders_client, folders_server, folders_direction, folders_sync_method, folders, folders_pause, folders_md5, folders_crc32)
+            MPSync_process.getObjectSettings(foldertype, folders_client, folders_server, folders_direction, folders_sync_method, folders, folders_pause, folders_md5, folders_crc32)
 
-        Process(UCase(foldertype), folders_client, folders_server, folders_direction, folders_sync_method, folders, folders_pause, folders_md5, folders_crc32)
+            Process(UCase(foldertype), folders_client, folders_server, folders_direction, folders_sync_method, folders, folders_pause, folders_md5, folders_crc32)
+
+        Catch ex As Exception
+            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][folders_processing] Unexpected error " & ex.Message, "ERROR")
+        End Try
 
     End Sub
 
