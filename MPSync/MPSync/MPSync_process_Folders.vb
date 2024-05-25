@@ -307,7 +307,7 @@ Public Class MPSync_process_Folders
 
         For x = 0 To UBound(parm)
 
-            If folders_pause Then CheckPlayerActive()
+            If folders_pause Then checkPlayerActive()
 
             file = Split(parm(x), "|")
 
@@ -354,7 +354,7 @@ Public Class MPSync_process_Folders
 
         For x = 0 To UBound(parm)
 
-            CheckPlayerActive()
+            checkPlayerActive()
 
             file = Split(parm(x), "|")
 
