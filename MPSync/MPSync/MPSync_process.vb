@@ -507,6 +507,8 @@ Public Class MPSync_process
             logStats("MPSync: [TableExist] Unexpected error " & ex.Message, MessageType.ERR)
         End Try
 
+        Return False
+
     End Function
 
     Private Function FieldExist(ByVal path As String, ByVal database As String, ByVal table As String, ByVal field As String) As Boolean
