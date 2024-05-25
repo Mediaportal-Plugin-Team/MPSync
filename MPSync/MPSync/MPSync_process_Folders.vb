@@ -18,7 +18,7 @@ Public Class MPSync_process_Folders
         Try
             Dim mps_folders As New MPSync_process_Folders
 
-            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] Folders synchronization started.", "INFO")
+            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] Folders synchronization started.", MessageType.INFO)
 
             Dim x As Integer = -1
             Dim process_thread() As Thread = Nothing
@@ -40,7 +40,7 @@ Public Class MPSync_process_Folders
                     If MPSync_process.checkThreads("folders") <> -1 Then
 
                         Do While _bw_active_fl_jobs >= MPSync_process.checkThreads("folders")
-                            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] waiting for available threads.", "DEBUG")
+                            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] waiting for available threads.", MessageType.DEBUG)
                             MPSync_process.wait(30, False)
                         Loop
 
@@ -78,7 +78,7 @@ Public Class MPSync_process_Folders
                     Next
 
                     If _bw_active_fl_jobs > 0 Then
-                        If MPSync_process.p_Debug Then MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] waiting for background threads to finish... " & _bw_active_fl_jobs.ToString & " threads remaining processing.", "DEBUG")
+                        If MPSync_process.p_Debug Then MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] waiting for background threads to finish... " & _bw_active_fl_jobs.ToString & " threads remaining processing.", MessageType.DEBUG)
                         MPSync_process.wait(10, False)
                     End If
 
@@ -88,10 +88,10 @@ Public Class MPSync_process_Folders
 
             If MPSync_settings.syncnow Then MPSync_settings.folders_complete = True
 
-            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] Folders synchronization complete.", "INFO")
+            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] Folders synchronization complete.", MessageType.INFO)
 
         Catch ex As Exception
-            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] Unexpected error " & ex.Message, "ERROR")
+            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][bw_folders_worker] Unexpected error " & ex.Message, MessageType.ERR)
         End Try
 
     End Sub
@@ -113,14 +113,14 @@ Public Class MPSync_process_Folders
             Process(UCase(foldertype), folders_client, folders_server, folders_direction, folders_sync_method, folders, folders_pause, folders_md5, folders_crc32)
 
         Catch ex As Exception
-            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][folders_processing] Unexpected error " & ex.Message, "ERROR")
+            MPSync_process.logStats("MPSync: [MPSync_process.WorkMethod][folders_processing] Unexpected error " & ex.Message, MessageType.ERR)
         End Try
 
     End Sub
 
     Private Sub Process(ByVal foldertype As String, ByVal clientpath As String, ByVal serverpath As String, ByVal direction As Integer, ByVal folders_sync_method As Integer, ByVal selectedfolder() As String, ByVal folders_pause As Boolean, ByVal folders_md5 As Boolean, ByVal folders_crc32 As Boolean)
 
-        MPSync_process.logStats("MPSync: [Process] " & foldertype & " synchronization cycle starting.", "LOG")
+        MPSync_process.logStats("MPSync: [Process] " & foldertype & " synchronization cycle starting.", MessageType.LOG)
 
         ' direction is client to server
         If direction <> 2 Then
@@ -132,7 +132,7 @@ Public Class MPSync_process_Folders
             process_Folder(foldertype, serverpath, clientpath, folders_sync_method, selectedfolder, folders_pause, folders_md5, folders_crc32)
         End If
 
-        MPSync_process.logStats("MPSync: [Process] " & foldertype & " synchronization cycle complete.", "LOG")
+        MPSync_process.logStats("MPSync: [Process] " & foldertype & " synchronization cycle complete.", MessageType.LOG)
 
         _bw_active_fl_jobs -= 1
 
@@ -164,7 +164,7 @@ Public Class MPSync_process_Folders
         Dim l2 As Integer = Len(c_path)
         Dim x As Integer = -1
 
-        MPSync_process.logStats("MPSync: [getobjectsDetails] Scanning folder " & path & " for objects", "LOG")
+        MPSync_process.logStats("MPSync: [getobjectsDetails] Scanning folder " & path & " for objects", MessageType.LOG)
 
         Try
 
@@ -218,10 +218,10 @@ Public Class MPSync_process_Folders
             time2 = Now
 
         Catch ex As Exception
-            MPSync_process.logStats("MPSync: [getobjectsDetails] failed to read objects from folder " & path & " with exception: " & ex.Message, "ERROR")
+            MPSync_process.logStats("MPSync: [getobjectsDetails] failed to read objects from folder " & path & " with exception: " & ex.Message, MessageType.ERR)
         End Try
 
-        MPSync_process.logStats("MPSync: [getobjectsDetails] " & x.ToString & " objects found in folder " & path & " in " & DateDiff(DateInterval.Second, time1, time2).ToString & " seconds", "LOG")
+        MPSync_process.logStats("MPSync: [getobjectsDetails] " & x.ToString & " objects found in folder " & path & " in " & DateDiff(DateInterval.Second, time1, time2).ToString & " seconds", MessageType.LOG)
 
         Return objects
 
@@ -230,7 +230,7 @@ Public Class MPSync_process_Folders
     Private Sub process_Folder(ByVal foldertype As String, ByVal source As String, ByVal target As String, ByVal folders_sync_method As Integer, ByVal selectedfolder() As String, ByVal folders_pause As Boolean, ByVal folders_md5 As Boolean, ByVal folders_crc32 As Boolean)
 
         If Not Directory.Exists(source) Then
-            MPSync_process.logStats("MPSync: [process_Folder] folder " & source & " does not exist", "ERROR")
+            MPSync_process.logStats("MPSync: [process_Folder] folder " & source & " does not exist", MessageType.ERR)
             Exit Sub
         End If
 
@@ -264,13 +264,13 @@ Public Class MPSync_process_Folders
             If folders_sync_method <> 1 And t_folders(0) <> "" Then
                 diff = t_folders.Except(s_folders, StringComparer.InvariantCultureIgnoreCase)
 
-                MPSync_process.logStats("MPSync: [process_Folder] found " & (UBound(diff.ToArray) + 1).ToString & " differences for deletion between " & source & " and " & target, "DEBUG")
+                MPSync_process.logStats("MPSync: [process_Folder] found " & (UBound(diff.ToArray) + 1).ToString & " differences for deletion between " & source & " and " & target, MessageType.DEBUG)
 
                 If UBound(diff.ToArray) >= 0 Then
                     If (diff.Count / t_folders.Count) <= 0.25 Then
                         delete_Objects(t_path, diff.ToArray)
                     Else
-                        MPSync_process.logStats("MPSync: [process_Folder] differences for deletion exceed 25% treshold.  Deletion not allowed for " & source & " and " & target, "INFO")
+                        MPSync_process.logStats("MPSync: [process_Folder] differences for deletion exceed 25% treshold.  Deletion not allowed for " & source & " and " & target, MessageType.INFO)
                     End If
                 End If
 
@@ -280,14 +280,14 @@ Public Class MPSync_process_Folders
             If folders_sync_method <> 2 And s_folders(0) <> "" Then
                 diff = s_folders.Except(t_folders, StringComparer.InvariantCultureIgnoreCase)
 
-                MPSync_process.logStats("MPSync: [process_Folder] found " & (UBound(diff.ToArray) + 1).ToString & " differences for addition/replacement between " & source & " and " & target, "DEBUG")
+                MPSync_process.logStats("MPSync: [process_Folder] found " & (UBound(diff.ToArray) + 1).ToString & " differences for addition/replacement between " & source & " and " & target, MessageType.DEBUG)
 
                 If UBound(diff.ToArray) >= 0 Then copy_Objects(s_path, t_path, diff.ToArray, folders_pause)
 
             End If
 
         Catch ex As Exception
-            MPSync_process.logStats("MPSync: [process_Folder] process failed with exception: " & ex.Message, "ERROR")
+            MPSync_process.logStats("MPSync: [process_Folder] process failed with exception: " & ex.Message, MessageType.ERR)
         End Try
 
         If s_folders IsNot Nothing Then Array.Clear(s_folders, 0, UBound(s_folders))
@@ -317,7 +317,7 @@ Public Class MPSync_process_Folders
 
                 If Not IO.Directory.Exists(directory) Then
                     IO.Directory.CreateDirectory(directory)
-                    MPSync_process.logStats("MPSync: [copy_Objects] directory missing, creating " & directory, "LOG")
+                    MPSync_process.logStats("MPSync: [copy_Objects] directory missing, creating " & directory, MessageType.LOG)
                 End If
 
             Else
@@ -326,23 +326,23 @@ Public Class MPSync_process_Folders
 
                 If Not IO.Directory.Exists(directory) Then
                     IO.Directory.CreateDirectory(directory)
-                    MPSync_process.logStats("MPSync: [copy_Objects] directory missing, creating " & directory, "LOG")
+                    MPSync_process.logStats("MPSync: [copy_Objects] directory missing, creating " & directory, MessageType.LOG)
                 End If
 
                 Try
                     If Not fileLocked(s_path & file(0), "copy_Objects") Then
                         IO.File.Copy(s_path & file(0), t_path & file(0), True)
-                        MPSync_process.logStats("MPSync: [copy_Objects] " & t_path & file(0) & " copied.", "DEBUG")
+                        MPSync_process.logStats("MPSync: [copy_Objects] " & t_path & file(0) & " copied.", MessageType.DEBUG)
                     End If
                 Catch ex As Exception
-                    MPSync_process.logStats("MPSync: [copy_Objects] copy failed with exception: " & ex.Message, "ERROR")
+                    MPSync_process.logStats("MPSync: [copy_Objects] copy failed with exception: " & ex.Message, MessageType.ERR)
                 End Try
 
             End If
 
         Next
 
-        If file(1) <> "WATCH" Then MPSync_process.logStats("MPSync: [copy_Objects] " & x.ToString & " objects added/replaced.", "LOG")
+        If file(1) <> "WATCH" Then MPSync_process.logStats("MPSync: [copy_Objects] " & x.ToString & " objects added/replaced.", MessageType.LOG)
 
     End Sub
 
@@ -361,20 +361,20 @@ Public Class MPSync_process_Folders
             Try
                 If file(1) = "FOLDER" Then
                     IO.Directory.Delete(t_path & file(0))
-                    MPSync_process.logStats("MPSync: [delete_Objects] " & t_path & file(0) & " deleted.", "DEBUG")
+                    MPSync_process.logStats("MPSync: [delete_Objects] " & t_path & file(0) & " deleted.", MessageType.DEBUG)
                 Else
                     If Not fileLocked(t_path & file(0), "[delete_Objects]") Then
                         IO.File.Delete(t_path & file(0))
-                        MPSync_process.logStats("MPSync: [delete_Objects] " & t_path & file(0) & " deleted.", "DEBUG")
+                        MPSync_process.logStats("MPSync: [delete_Objects] " & t_path & file(0) & " deleted.", MessageType.DEBUG)
                     End If
                 End If
             Catch ex As Exception
-                MPSync_process.logStats("MPSync: [delete_Objects] delete failed with exception: " & ex.Message, "ERROR")
+                MPSync_process.logStats("MPSync: [delete_Objects] delete failed with exception: " & ex.Message, MessageType.ERR)
             End Try
 
         Next
 
-        If file(1) <> "WATCH" Then MPSync_process.logStats("MPSync: [delete_Objects] " & x.ToString & " objects removed.", "LOG")
+        If file(1) <> "WATCH" Then MPSync_process.logStats("MPSync: [delete_Objects] " & x.ToString & " objects removed.", MessageType.LOG)
 
     End Sub
 
@@ -391,12 +391,12 @@ Public Class MPSync_process_Folders
 
         Do While isFileLocked(filename)
 
-            MPSync_process.logStats("MPSync: [" & proc & "] obtaining lock on file " & filename, "DEBUG")
+            MPSync_process.logStats("MPSync: [" & proc & "] obtaining lock on file " & filename, MessageType.DEBUG)
 
             lock_count += 1
 
             If lock_count = 10 Then
-                MPSync_process.logStats("MPSync: [" & proc & "] lock on file " & filename & "not obtained.  File in use, skipping file.", "DEBUG")
+                MPSync_process.logStats("MPSync: [" & proc & "] lock on file " & filename & "not obtained.  File in use, skipping file.", MessageType.DEBUG)
                 Return True
             End If
 

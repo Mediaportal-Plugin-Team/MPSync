@@ -136,7 +136,7 @@ Public Class MPSync_settings
             End If
             b_sync_now.Enabled = True
         Catch ex As Exception
-            MPSync_process.logStats("MPSync: " & ex.Message, "ERROR")
+            MPSync_process.logStats("MPSync: " & ex.Message, MessageType.ERR)
             b_sync_now.Enabled = False
         End Try
 

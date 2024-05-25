@@ -13,7 +13,7 @@ Class MPSync_process_Folders_watch
     Public Sub watch_folder(ByVal path As String, ByVal foldertype As String, ByVal spath As String, ByVal tpath As String, ByVal selectedfolder() As String)
 
         If Not Directory.Exists(path) Then
-            MPSync_process.logStats("MPSync: [watch_folder] folder " & path & " does not exist", "ERROR")
+            MPSync_process.logStats("MPSync: [watch_folder] folder " & path & " does not exist", MessageType.ERR)
             Exit Sub
         End If
 
@@ -25,7 +25,7 @@ Class MPSync_process_Folders_watch
 
         watchfolder = New System.IO.FileSystemWatcher()
 
-        MPSync_process.logStats("MPSync: " & foldertype & " watch starting for " & path, "LOG")
+        MPSync_process.logStats("MPSync: " & foldertype & " watch starting for " & path, MessageType.LOG)
 
         'this is the path we want to monitor
         watchfolder.Path = path
@@ -74,7 +74,7 @@ Class MPSync_process_Folders_watch
                 End If
             End If
         Catch ex As Exception
-            MPSync_process.logStats("MPSync: fileChange failed on " & e.FullPath & " with exception: " & ex.Message, "ERROR")
+            MPSync_process.logStats("MPSync: fileChange failed on " & e.FullPath & " with exception: " & ex.Message, MessageType.ERR)
         End Try
 
     End Sub
@@ -95,12 +95,12 @@ Class MPSync_process_Folders_watch
 
             If selected_folder.Contains(folder) Or selected_folder.Contains("ALL") Then
                 If MPSync_process_Folders.fileLocked(e.OldFullPath, "filerename") Then
-                    MPSync_process.logStats("MPSync: " & folder_type & " - " & e.OldFullPath & " renamed to " & e.FullPath, "LOG")
+                    MPSync_process.logStats("MPSync: " & folder_type & " - " & e.OldFullPath & " renamed to " & e.FullPath, MessageType.LOG)
                     FileSystem.Rename(e.OldFullPath, e.FullPath)
                 End If
             End If
         Catch ex As Exception
-            MPSync_process.logStats("MPSync: rename failed with exception: " & ex.Message, "ERROR")
+            MPSync_process.logStats("MPSync: rename failed with exception: " & ex.Message, MessageType.ERR)
         End Try
 
     End Sub
