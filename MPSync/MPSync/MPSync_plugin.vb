@@ -24,10 +24,18 @@ Namespace MPSync
             bw.WorkerSupportsCancellation = False
             bw.WorkerReportsProgress = False
             AddHandler bw.DoWork, AddressOf Worker
+            AddHandler AppDomain.CurrentDomain.AssemblyResolve, AddressOf downloadAssembly
 
             bw.RunWorkerAsync()
 
         End Sub
+
+        Private Function downloadAssembly(sender As Object, args As ResolveEventArgs)
+            If args.Name.StartsWith("System.Data.SQLite") Then
+                Return Reflection.Assembly.LoadFrom("plugins\process\System.Data.SQLite.dll")
+            End If
+            Return Nothing
+        End Function
 
         Private Sub Worker()
 
