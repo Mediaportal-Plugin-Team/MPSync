@@ -314,15 +314,17 @@ Click Next to continue or Cancel to exit Setup.</Value>
     <Version>
       <Major>1</Major>
       <Minor>0</Minor>
-      <Build>5</Build>
-      <Revision>1</Revision>
+      <Build>6</Build>
+      <Revision>0</Revision>
     </Version>
     <ExtensionDescription>This plugin synchronizes your MediaPortal databases with a central database as well as thumbs folder, so that any additons can by automatically applied to any other MP seat you might have in your household.</ExtensionDescription>
     <VersionDescription>- Improved exception logging
-- reverted Fix SQLite.Interop location</VersionDescription>
+- Fix for overwriting watched and resume status of moving pictures database
+- Fix for loading wrong dll in MP 1.36
+</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://github.com/Mediaportal-Plugin-Team/MPSync/releases/download/v[Version]/MPSync-[Version].mpe1</OnlineLocation>
-    <ReleaseDate>2024-05-25T23:23:23</ReleaseDate>
+    <ReleaseDate>2024-12-20T23:23:23</ReleaseDate>
     <Tags>synchronization, database, thumbs, any folder you set up.</Tags>
     <PlatformCompatibility>AnyCPU</PlatformCompatibility>
     <Location>[Name]-[Version].mpe1</Location>
