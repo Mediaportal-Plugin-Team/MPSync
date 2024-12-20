@@ -598,8 +598,11 @@ Public Class MPSync_process_DB
             SQLconnect.Open()
 
             Try
-
-                SQLcommand.CommandText = "SELECT tablename FROM mpsync_trigger WHERE lastupdated > '" & lastsync & "' ORDER BY lastupdated, tablename"
+                Dim skipWatched As String = ""
+                If Not MPSync_process.check_watched Then
+                    skipWatched = " AND NOT tablename like '%watched_history%'"
+                End If
+                SQLcommand.CommandText = "SELECT tablename FROM mpsync_trigger WHERE lastupdated > '" & lastsync & "'" & skipWatched & " ORDER BY lastupdated, tablename"
                 Using SQLreader = SQLcommand.ExecuteReader()
 
                     While SQLreader.Read()
@@ -620,10 +623,14 @@ Public Class MPSync_process_DB
 
                 MPSync_process.logStats("MPSync: [checkbytrigger] checking for records in mpsync table in database " & target & database, MessageType.DEBUG)
 
+                Dim skipWatched As String = ""
+                If Not MPSync_process.check_watched Then
+                    skipWatched = "WHERE NOT tablename like '%watched_history%'"
+                End If
 
                 SQLconnect.ConnectionString = "Data Source=" & MPSync_process.p_Database(target & database) & ";Read Only=True;"
                 SQLconnect.Open()
-                SQLcommand.CommandText = "SELECT tablename FROM mpsync ORDER BY mps_lastupdated, tablename"
+                SQLcommand.CommandText = "SELECT tablename FROM mpsync " & skipWatched & " ORDER BY mps_lastupdated, tablename"
                 Using SQLreader = SQLcommand.ExecuteReader()
                     Try
 
@@ -667,6 +674,9 @@ Public Class MPSync_process_DB
             SQLcommand1.ExecuteNonQuery()
 
             SQLcommand1.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'mpsync%' AND name NOT LIKE 'sqlite%'"
+            If Not MPSync_process.check_watched Then
+                SQLcommand1.CommandText = SQLcommand1.CommandText & "AND NOT name like '%watched_history%'"
+            End If
             Using SQLreader1 = SQLcommand1.ExecuteReader()
 
                 While SQLreader1.Read()
@@ -706,8 +716,10 @@ Public Class MPSync_process_DB
         If MPSync_process.TableExist(source, database, "mpsync_trigger") Then
             parm.tables = getDatabaseRecords(source, target, database, checkbytrigger(source, target, database))
         Else
-            Dim omit As Array = {"mpsync", "mpsync_trigger", "sqlite_sequence", "sqlite_stat1", "sqlite_stat2"}
-
+            Dim omit As List(Of String) = New List(Of String)({"mpsync", "mpsync_trigger", "sqlite_sequence", "sqlite_stat1", "sqlite_stat2"})
+            If Not MPSync_process.check_watched Then
+                omit.Add("watched_history")
+            End If
             Using SQLconnect As New SQLiteConnection(),
                 SQLcommand As SQLiteCommand = SQLconnect.CreateCommand
 
@@ -722,7 +734,7 @@ Public Class MPSync_process_DB
 
                     While SQLreader.Read()
 
-                        If Array.IndexOf(omit, SQLreader.GetString(0)) = -1 Then
+                        If Not omit.Contains(SQLreader.GetString(0)) Then
                             parm.tables.Add(New TableInfo(source, target, database, SQLreader.GetString(0)))
                         End If
 
