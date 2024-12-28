@@ -280,8 +280,6 @@ Public Class MPSync_process
 
                 If item(1) = "True" Then
 
-                    item(0) = UCase(item(0))
-
                     getObjectSettings(item(0))
 
                     Select Case _folders_direction
