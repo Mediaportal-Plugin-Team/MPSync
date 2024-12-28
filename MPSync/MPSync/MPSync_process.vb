@@ -949,22 +949,22 @@ Public Class MPSync_process
             Select Case database
 
                 Case mps.i_watched(0).database
-                    SQL = "CREATE TABLE IF NOT EXISTS mpsync " & _
-                          "(mps_id INTEGER PRIMARY KEY AUTOINCREMENT, tablename TEXT, mps_lastupdated TEXT, mps_session TEXT, id INTEGER, user TEXT, " & _
-                          "user_rating TEXT, watched INTEGER, resume_part INTEGER, resume_time INTEGER, resume_data TEXT, alternatecovers TEXT, coverfullpath TEXT, " & _
+                    SQL = "CREATE TABLE IF NOT EXISTS mpsync " &
+                          "(mps_id INTEGER PRIMARY KEY AUTOINCREMENT, tablename TEXT, mps_lastupdated TEXT, mps_session TEXT, id INTEGER, user TEXT, " &
+                          "user_rating TEXT, watched INTEGER, resume_part INTEGER, resume_time INTEGER, resume_data TEXT, alternatecovers TEXT, coverfullpath TEXT, " &
                           "coverthumbfullpath TEXT)"
                 Case mps.i_watched(1).database
-                    SQL = "CREATE TABLE IF NOT EXISTS mpsync (mps_id INTEGER PRIMARY KEY AUTOINCREMENT, tablename TEXT, mps_lastupdated TEXT, mps_session TEXT, " & _
+                    SQL = "CREATE TABLE IF NOT EXISTS mpsync (mps_id INTEGER PRIMARY KEY AUTOINCREMENT, tablename TEXT, mps_lastupdated TEXT, mps_session TEXT, " &
                           "idTrack INTEGER, iResumeAt INTEGER, dateLastPlayed TEXT)"
                 Case mps.i_watched(2).database
-                    SQL = "CREATE TABLE IF NOT EXISTS mpsync " & _
-                          "(mps_id INTEGER PRIMARY KEY AUTOINCREMENT, tablename TEXT, mps_lastupdated TEXT, mps_session TEXT, CompositeID TEXT, id INTEGER, " & _
-                          "EpisodeFilename TEXT, watched INTEGER, myRating TEXT, StopTime TEXT, DateWatched TEXT, WatchedFileTimeStamp INTEGER, " & _
+                    SQL = "CREATE TABLE IF NOT EXISTS mpsync " &
+                          "(mps_id INTEGER PRIMARY KEY AUTOINCREMENT, tablename TEXT, mps_lastupdated TEXT, mps_session TEXT, CompositeID TEXT, id INTEGER, " &
+                          "EpisodeFilename TEXT, watched INTEGER, myRating TEXT, StopTime TEXT, DateWatched TEXT, WatchedFileTimeStamp INTEGER, " &
                           "UnwatchedItems INTEGER, EpisodesUnWatched INTEGER)"
                 Case mps.i_watched(3).database
-                    SQL = "CREATE TABLE IF NOT EXISTS mpsync " & _
-                          "(mps_id INTEGER PRIMARY KEY AUTOINCREMENT, tablename TEXT, mps_lastupdated TEXT, mps_session TEXT, idMovie INTEGER, watched BOOL, " & _
-                          "timeswatched INTEGER, iwatchedPercent INTEGER, idResume INTEGER, idFile INTEGER, stoptime INTEGER, resumeData BLOOB, idBookmark INTEGER, " & _
+                    SQL = "CREATE TABLE IF NOT EXISTS mpsync " &
+                          "(mps_id INTEGER PRIMARY KEY AUTOINCREMENT, tablename TEXT, mps_lastupdated TEXT, mps_session TEXT, idMovie INTEGER, watched BOOL, " &
+                          "timeswatched INTEGER, iwatchedPercent INTEGER, idResume INTEGER, idFile INTEGER, stoptime INTEGER, resumeData BLOOB, idBookmark INTEGER, " &
                           "fPercentage TEXT)"
 
             End Select
@@ -1143,12 +1143,12 @@ Public Class MPSync_process
                     If tblflds <> Nothing Then
                         newflds = FieldList(path, database, tables(x), fields(x).names, "new.")
 
-                        SQL = SQL & "CREATE TRIGGER IF NOT EXISTS mpsync_watch_" & tables(x) & " " & _
-                              "AFTER UPDATE OF " & tblflds & " ON " & tables(x) & " " & _
-                              "BEGIN " & _
-                              "DELETE FROM mpsync WHERE tablename='" & tables(x) & "' AND mps_session='" & session & "' AND " & keys(x) & "=new." & keys(x) & "; " & _
-                              "INSERT OR REPLACE INTO mpsync(tablename,mps_lastupdated,mps_session," & tblflds & ") " & _
-                              "VALUES('" & tables(x) & "',datetime('now','localtime'),'" & session & "'," & newflds & "); " & _
+                        SQL = SQL & "CREATE TRIGGER IF NOT EXISTS mpsync_watch_" & tables(x) & " " &
+                              "AFTER UPDATE OF " & tblflds & " ON " & tables(x) & " " &
+                              "BEGIN " &
+                              "DELETE FROM mpsync WHERE tablename='" & tables(x) & "' AND mps_session='" & session & "' AND " & keys(x) & "=new." & keys(x) & "; " &
+                              "INSERT OR REPLACE INTO mpsync(tablename,mps_lastupdated,mps_session," & tblflds & ") " &
+                              "VALUES('" & tables(x) & "',datetime('now','localtime'),'" & session & "'," & newflds & "); " &
                               "END; "
                     End If
                 End If
@@ -1290,36 +1290,36 @@ Public Class MPSync_process
 
             End If
 
-        For x = 0 To UBound(table)
+            For x = 0 To UBound(table)
 
-            u_SQL = "CREATE TRIGGER mpsync_work_u_" & table(x) & " " & _
-                    "AFTER UPDATE ON " & table(x) & " " & _
-                    "BEGIN " & _
-                    "UPDATE mpsync_trigger SET lastupdated=datetime('now','localtime') WHERE tablename='" & table(x) & "'; " & _
-                    "INSERT INTO mpsync_trigger(tablename,lastupdated) " & _
-                    "SELECT '" & table(x) & "',datetime('now','localtime') " & _
-                    "WHERE NOT EXISTS (SELECT 1 FROM mpsync_trigger WHERE tablename = '" & table(x) & "' LIMIT 1); " & _
+                u_SQL = "CREATE TRIGGER mpsync_work_u_" & table(x) & " " &
+                    "AFTER UPDATE ON " & table(x) & " " &
+                    "BEGIN " &
+                    "UPDATE mpsync_trigger SET lastupdated=datetime('now','localtime') WHERE tablename='" & table(x) & "'; " &
+                    "INSERT INTO mpsync_trigger(tablename,lastupdated) " &
+                    "SELECT '" & table(x) & "',datetime('now','localtime') " &
+                    "WHERE NOT EXISTS (SELECT 1 FROM mpsync_trigger WHERE tablename = '" & table(x) & "' LIMIT 1); " &
                     "END"
 
-            i_SQL = "CREATE TRIGGER mpsync_work_i_" & table(x) & " " & _
-                    "AFTER INSERT ON " & table(x) & " " & _
-                    "BEGIN " & _
-                    "UPDATE mpsync_trigger SET lastupdated=datetime('now','localtime') WHERE tablename='" & table(x) & "'; " & _
-                    "INSERT INTO mpsync_trigger(tablename,lastupdated) " & _
-                    "SELECT '" & table(x) & "',datetime('now','localtime') " & _
-                    "WHERE NOT EXISTS (SELECT 1 FROM mpsync_trigger WHERE tablename = '" & table(x) & "' LIMIT 1); " & _
+                i_SQL = "CREATE TRIGGER mpsync_work_i_" & table(x) & " " &
+                    "AFTER INSERT ON " & table(x) & " " &
+                    "BEGIN " &
+                    "UPDATE mpsync_trigger SET lastupdated=datetime('now','localtime') WHERE tablename='" & table(x) & "'; " &
+                    "INSERT INTO mpsync_trigger(tablename,lastupdated) " &
+                    "SELECT '" & table(x) & "',datetime('now','localtime') " &
+                    "WHERE NOT EXISTS (SELECT 1 FROM mpsync_trigger WHERE tablename = '" & table(x) & "' LIMIT 1); " &
                     "END"
 
-            d_SQL = "CREATE TRIGGER mpsync_work_d_" & table(x) & " " & _
-                    "AFTER DELETE ON " & table(x) & " " & _
-                    "BEGIN " & _
-                    "UPDATE mpsync_trigger SET lastupdated=datetime('now','localtime') WHERE tablename='" & table(x) & "'; " & _
-                    "INSERT INTO mpsync_trigger(tablename,lastupdated) " & _
-                    "SELECT '" & table(x) & "',datetime('now','localtime') " & _
-                    "WHERE NOT EXISTS (SELECT 1 FROM mpsync_trigger WHERE tablename = '" & table(x) & "' LIMIT 1); " & _
+                d_SQL = "CREATE TRIGGER mpsync_work_d_" & table(x) & " " &
+                    "AFTER DELETE ON " & table(x) & " " &
+                    "BEGIN " &
+                    "UPDATE mpsync_trigger SET lastupdated=datetime('now','localtime') WHERE tablename='" & table(x) & "'; " &
+                    "INSERT INTO mpsync_trigger(tablename,lastupdated) " &
+                    "SELECT '" & table(x) & "',datetime('now','localtime') " &
+                    "WHERE NOT EXISTS (SELECT 1 FROM mpsync_trigger WHERE tablename = '" & table(x) & "' LIMIT 1); " &
                     "END"
 
-            If trigger.Contains(u_SQL) And trigger.Contains(i_SQL) And trigger.Contains(d_SQL) Then
+                If trigger.Contains(u_SQL) And trigger.Contains(i_SQL) And trigger.Contains(d_SQL) Then
                     u_SQL = Nothing
                     i_SQL = Nothing
                     d_SQL = Nothing
