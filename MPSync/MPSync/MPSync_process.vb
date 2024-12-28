@@ -113,17 +113,17 @@ Public Class MPSync_process
         folders = Nothing
 
         Try
-            Using XMLreader As MediaPortal.Profile.Settings = New MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MPSync_" & UCase(objsetting) & ".xml"))
+            Using XMLreader As MediaPortal.Profile.Settings = New MediaPortal.Profile.Settings(MPSync_settings.GetConfigFileName)
 
-                folders_client = XMLreader.GetValueAsString("Path", "client", Nothing)
-                folders_server = XMLreader.GetValueAsString("Path", "server", Nothing)
-                folders_direction = XMLreader.GetValueAsInt("Path", "direction", 0)
-                folders_sync_method = XMLreader.GetValueAsInt("Path", "method", 0)
+                folders_client = XMLreader.GetValueAsString(objsetting & " Path", "client", Nothing)
+                folders_server = XMLreader.GetValueAsString(objsetting & " Path", "server", Nothing)
+                folders_direction = XMLreader.GetValueAsInt(objsetting & " Path", "direction", 0)
+                folders_sync_method = XMLreader.GetValueAsInt(objsetting & " Path", "method", 0)
 
-                folders = XMLreader.GetValueAsString("Settings", "folders", Nothing)
-                folders_pause = CBool(XMLreader.GetValueAsString("Settings", "pause while playing", False.ToString()))
-                folders_md5 = CBool(XMLreader.GetValueAsString("Settings", "use MD5", False.ToString()))
-                folders_crc32 = CBool(XMLreader.GetValueAsString("Settings", "use CRC32", False.ToString()))
+                folders = XMLreader.GetValueAsString(objsetting & " Settings", "folders", Nothing)
+                folders_pause = CBool(XMLreader.GetValueAsString(objsetting & " Settings", "pause while playing", False.ToString()))
+                folders_md5 = CBool(XMLreader.GetValueAsString(objsetting & " Settings", "use MD5", False.ToString()))
+                folders_crc32 = CBool(XMLreader.GetValueAsString(objsetting & " Settings", "use CRC32", False.ToString()))
 
             End Using
 
@@ -149,7 +149,7 @@ Public Class MPSync_process
             _folders_md5 = folders_md5.ToString
             _folders_crc32 = folders_crc32.ToString
         Catch ex As Exception
-            MPSync_process.logStats("MPSync: Error reading MPSync_" & UCase(objsetting) & ".xml with exception " & ex.Message, MessageType.ERR)
+            MPSync_process.logStats("MPSync: Error reading " & MPSync_settings.GetConfigFileName & " with exception " & ex.Message, MessageType.ERR)
         End Try
 
     End Sub
@@ -185,6 +185,8 @@ Public Class MPSync_process
         Dim file As String = MPSync_settings.GetConfigFileName
 
         If Not FileIO.FileSystem.FileExists(file) Then Return
+
+        MPSync_settings.MergeSettings()
 
         Dim i_method As String() = {"Propagate both additions and deletions", "Propagate additions only", "Propagate deletions only"}
         Dim db_sync_value, databases, watched_dbs, objects, version, lastsync As String

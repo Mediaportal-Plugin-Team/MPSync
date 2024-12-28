@@ -161,18 +161,38 @@ Public Class MPSync_settings
 
     End Sub
 
+    Public Shared Sub MergeSettings()
+        Dim fileName As String = Config.GetFile(Config.Dir.Config, "MPSync_THUMBS.xml")
+        If IO.File.Exists(fileName) Then
+            Using XMLreader As MediaPortal.Profile.Settings = New MediaPortal.Profile.Settings(fileName),
+                  XmlWriter As MediaPortal.Profile.Settings = New MediaPortal.Profile.Settings(GetConfigFileName)
+
+
+                XmlWriter.SetValue("Thumbs Path", "direction", XMLreader.GetValueAsInt("Path", "direction", 1))
+                XmlWriter.SetValue("Thumbs Path", "client", XMLreader.GetValueAsString("Path", "client", Nothing))
+                XmlWriter.SetValue("Thumbs Path", "server", XMLreader.GetValueAsString("Path", "server", Nothing))
+                XmlWriter.SetValue("Thumbs Path", "method", XMLreader.GetValueAsInt("Path", "method", 0))
+                XmlWriter.SetValue("Thumbs Settings", "folders", XMLreader.GetValueAsString("Settings", "folders", Nothing))
+                XmlWriter.SetValue("Thumbs Settings", "pause while playing", XMLreader.GetValueAsBool("Settings", "pause while playing", False))
+                XmlWriter.SetValue("Thumbs Settings", "use MD5", XMLreader.GetValueAsBool("Settings", "use MD5", False))
+                XmlWriter.SetValue("Thumbs Settings", "use CRC32", XMLreader.GetValueAsBool("Settings", "use CRC32", False))
+            End Using
+            MediaPortal.Profile.Settings.SaveCache()
+            IO.File.Delete(fileName)
+        End If
+    End Sub
     Private Sub getObjectSettings(ByVal objsetting As String)
 
-        Using XMLreader As MediaPortal.Profile.Settings = New MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MPSync_" & UCase(objsetting) & ".xml"))
+        Using XMLreader As MediaPortal.Profile.Settings = New MediaPortal.Profile.Settings(MPSync_settings.GetConfigFileName)
 
-            _clicks_folders = XMLreader.GetValueAsInt("Path", "direction", 1)
-            tb_folders_client_path.Text = XMLreader.GetValueAsString("Path", "client", Nothing)
-            tb_folders_server_path.Text = XMLreader.GetValueAsString("Path", "server", Nothing)
-            _folders_sync_method = XMLreader.GetValueAsInt("Path", "method", 0)
-            _folders = XMLreader.GetValueAsString("Settings", "folders", Nothing)
-            cb_folders_pause.Checked = CBool(XMLreader.GetValueAsString("Settings", "pause while playing", False.ToString()))
-            cb_folders_md5.Checked = CBool(XMLreader.GetValueAsString("Settings", "use MD5", False.ToString()))
-            cb_folders_crc32.Checked = CBool(XMLreader.GetValueAsString("Settings", "use CRC32", False.ToString()))
+            _clicks_folders = XMLreader.GetValueAsInt(objsetting & " Path", "direction", 1)
+            tb_folders_client_path.Text = XMLreader.GetValueAsString(objsetting & " Path", "client", Nothing)
+            tb_folders_server_path.Text = XMLreader.GetValueAsString(objsetting & " Path", "server", Nothing)
+            _folders_sync_method = XMLreader.GetValueAsInt(objsetting & " Path", "method", 0)
+            _folders = XMLreader.GetValueAsString(objsetting & " Settings", "folders", Nothing)
+            cb_folders_pause.Checked = CBool(XMLreader.GetValueAsString(objsetting & " Settings", "pause while playing", False.ToString()))
+            cb_folders_md5.Checked = CBool(XMLreader.GetValueAsString(objsetting & " Settings", "use MD5", False.ToString()))
+            cb_folders_crc32.Checked = CBool(XMLreader.GetValueAsString(objsetting & " Settings", "use CRC32", False.ToString()))
 
         End Using
 
@@ -194,13 +214,6 @@ Public Class MPSync_settings
 
     Private Sub setObjectSettings(ByVal objsetting As String)
 
-        If _version <> _curversion Then
-            If IO.File.Exists(Config.GetFile(Config.Dir.Config, "MPSync_" & UCase(objsetting) & ".xml")) Then
-                IO.File.Delete(Config.GetFile(Config.Dir.Config, "MPSync_" & UCase(objsetting) & ".xml"))
-                MediaPortal.Profile.Settings.ClearCache()
-            End If
-        End If
-
         _folders = Nothing
 
         If rb_specific_folders.Checked Then
@@ -209,31 +222,21 @@ Public Class MPSync_settings
             Next
         End If
 
-        Using XMLwriter As MediaPortal.Profile.Settings = New MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MPSync_" & UCase(objsetting) & ".xml"))
+        Using XMLwriter As MediaPortal.Profile.Settings = New MediaPortal.Profile.Settings(MPSync_settings.GetConfigFileName)
 
-            XMLwriter.SetValue("Path", "client", tb_folders_client_path.Text)
-            XMLwriter.SetValue("Path", "server", tb_folders_server_path.Text)
-            XMLwriter.SetValue("Path", "direction", _clicks_folders.ToString)
-            XMLwriter.SetValue("Path", "method", Array.IndexOf(i_method, cb_folders_sync_method.Text))
+            XMLwriter.SetValue(objsetting & " Path", "client", tb_folders_client_path.Text)
+            XMLwriter.SetValue(objsetting & " Path", "server", tb_folders_server_path.Text)
+            XMLwriter.SetValue(objsetting & " Path", "direction", _clicks_folders.ToString)
+            XMLwriter.SetValue(objsetting & " Path", "method", Array.IndexOf(i_method, cb_folders_sync_method.Text))
 
-            XMLwriter.SetValue("Settings", "pause while playing", cb_folders_pause.Checked)
-            XMLwriter.SetValue("Settings", "use MD5", cb_folders_md5.Checked)
-            XMLwriter.SetValue("Settings", "use CRC32", cb_folders_crc32.Checked)
-            XMLwriter.SetValue("Settings", "folders", _folders)
+            XMLwriter.SetValue(objsetting & " Settings", "pause while playing", cb_folders_pause.Checked)
+            XMLwriter.SetValue(objsetting & " Settings", "use MD5", cb_folders_md5.Checked)
+            XMLwriter.SetValue(objsetting & " Settings", "use CRC32", cb_folders_crc32.Checked)
+            XMLwriter.SetValue(objsetting & " Settings", "folders", _folders)
 
         End Using
 
         MediaPortal.Profile.Settings.SaveCache()
-
-    End Sub
-
-    Private Sub deleteObjectSettings(ByVal objsetting As String)
-
-        If IO.File.Exists(Config.GetFile(Config.Dir.Config, "MPSync_" & UCase(objsetting) & ".xml")) Then
-            IO.File.Delete(Config.GetFile(Config.Dir.Config, "MPSync_" & UCase(objsetting) & ".xml"))
-        End If
-
-        MediaPortal.Profile.Settings.ClearCache()
 
     End Sub
 
@@ -598,7 +601,6 @@ Public Class MPSync_settings
 
         If MsgBox("Are you sure?", MsgBoxStyle.YesNo, "Delete") = MsgBoxResult.Yes Then
 
-            deleteObjectSettings(clb_object_list.SelectedItem)
             clb_object_list.Items.Remove(clb_object_list.SelectedItem)
 
             clb_object_list.SelectedItem = Nothing
