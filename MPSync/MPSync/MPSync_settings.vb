@@ -5,13 +5,18 @@ Imports MediaPortal.GUI.Library
 Imports System.Xml
 
 Public Class MPSync_settings
+    Private Enum SyncDirection
+        ClientToServer = 1
+        ServerToClient = 2
+    End Enum
+
 
     Dim _curversion As String = Assembly.GetExecutingAssembly().GetName().Version.ToString()
     Dim i_direction(2) As Image
     Dim i_method(2), _databases, _folders, _watched_dbs, _object_list, _db_objects, _version, _session, _sync_type As String
     Dim _db_sync_method, _folders_sync_method As Integer
-    Dim _clicks_db As Integer = 1
-    Dim _clicks_folders As Integer = 1
+    Dim _clicks_db As SyncDirection = SyncDirection.ClientToServer
+    Dim _clicks_folders As SyncDirection = SyncDirection.ClientToServer
     Dim lb_status_timer As New System.Timers.Timer()
 
     Public Shared max_DB_threads As Integer = -1
@@ -204,9 +209,9 @@ Public Class MPSync_settings
 
         'populate the respective listboxes
 
-        If _clicks_db <> 2 Then
+        If _clicks_db = SyncDirection.ClientToServer Then
             If tb_folders_client_path.Text <> Nothing Then populate_checkedlistbox(clb_objects, tb_folders_client_path.Text, "thumbs")
-        ElseIf _clicks_db = 2 Then
+        Else
             If tb_folders_server_path.Text <> Nothing Then populate_checkedlistbox(clb_objects, tb_folders_server_path.Text, "thumbs")
         End If
 
@@ -226,7 +231,7 @@ Public Class MPSync_settings
 
             XMLwriter.SetValue(objsetting & " Path", "client", tb_folders_client_path.Text)
             XMLwriter.SetValue(objsetting & " Path", "server", tb_folders_server_path.Text)
-            XMLwriter.SetValue(objsetting & " Path", "direction", _clicks_folders.ToString)
+            XMLwriter.SetValue(objsetting & " Path", "direction", CInt(_clicks_folders))
             XMLwriter.SetValue(objsetting & " Path", "method", Array.IndexOf(i_method, cb_folders_sync_method.Text))
 
             XMLwriter.SetValue(objsetting & " Settings", "pause while playing", cb_folders_pause.Checked)
@@ -300,10 +305,10 @@ Public Class MPSync_settings
 
         'populate the respective listboxes
 
-        If _clicks_db <> 2 Then
+        If _clicks_db = SyncDirection.ClientToServer Then
             populate_checkedlistbox(clb_databases, tb_db_client_path.Text, "databases", "*.db3", ".db3-journal")
             populate_checkedlistbox(clb_db_objects, tb_db_client_path.Text, "db_db_objects", "*.*", ".db3")
-        ElseIf _clicks_db = 2 Then
+        Else
             populate_checkedlistbox(clb_databases, tb_db_server_path.Text, "databases", "*.db3", ".db3-journal")
             populate_checkedlistbox(clb_db_objects, tb_db_server_path.Text, "db_db_objects", "*.*", ".db3")
         End If
@@ -381,7 +386,7 @@ Public Class MPSync_settings
 
             XMLwriter.SetValue("DB Path", "client", tb_db_client_path.Text)
             XMLwriter.SetValue("DB Path", "server", tb_db_server_path.Text)
-            XMLwriter.SetValue("DB Path", "direction", _clicks_db.ToString)
+            XMLwriter.SetValue("DB Path", "direction", CInt(_clicks_db))
             XMLwriter.SetValue("DB Path", "method", Array.IndexOf(i_method, cb_db_sync_method.Text))
 
             XMLwriter.SetValue("DB Settings", "sync periodicity", nud_db_sync.Value)
@@ -482,14 +487,10 @@ Public Class MPSync_settings
 
         If DirectCast(sender, System.Windows.Forms.Button).Name = "b_db_direction" Then
 
-            _clicks_db += 1
-
-            If _clicks_db > 2 Then _clicks_db = 1
-
-            If _clicks_db = 0 Then
-                cb_db_sync_method.Items.RemoveAt(0)
+            If _clicks_db = SyncDirection.ClientToServer Then
+                _clicks_db = SyncDirection.ServerToClient
             Else
-                cb_db_sync_method.Items.Insert(0, i_method(0))
+                _clicks_db = SyncDirection.ClientToServer
             End If
 
             cb_db_sync_method.Refresh()
@@ -497,22 +498,18 @@ Public Class MPSync_settings
             b_db_direction.Image = i_direction(_clicks_db)
             b_db_direction.Refresh()
 
-            If _clicks_db <> 2 Then
+            If _clicks_db = SyncDirection.ClientToServer Then
                 populate_checkedlistbox(clb_databases, tb_db_client_path.Text, "*.db3")
-            ElseIf _clicks_db = 2 Then
+            Else
                 populate_checkedlistbox(clb_databases, tb_db_server_path.Text, "*.db3")
             End If
 
         ElseIf DirectCast(sender, System.Windows.Forms.Button).Name = "b_folders_direction" Then
 
-            _clicks_folders += 1
-
-            If _clicks_folders > 2 Then _clicks_folders = 1
-
-            If _clicks_folders = 0 Then
-                cb_folders_sync_method.Items.RemoveAt(0)
+            If _clicks_folders = SyncDirection.ClientToServer Then
+                _clicks_folders = SyncDirection.ServerToClient
             Else
-                cb_folders_sync_method.Items.Insert(0, i_method(0))
+                _clicks_folders = SyncDirection.ClientToServer
             End If
 
             cb_folders_sync_method.Refresh()
@@ -520,9 +517,9 @@ Public Class MPSync_settings
             b_folders_direction.Image = i_direction(_clicks_folders)
             b_folders_direction.Refresh()
 
-            If _clicks_folders <> 2 Then
+            If _clicks_folders = SyncDirection.ClientToServer Then
                 populate_checkedlistbox(clb_objects, tb_folders_client_path.Text, "thumbs")
-            ElseIf _clicks_folders = 2 Then
+            Else
                 populate_checkedlistbox(clb_objects, tb_folders_server_path.Text, "thumbs")
             End If
 
@@ -544,17 +541,17 @@ Public Class MPSync_settings
             MsgBox("Path not found!", MsgBoxStyle.Exclamation)
             DirectCast(sender, System.Windows.Forms.TextBox).Undo()
         Else
-            If DirectCast(sender, System.Windows.Forms.TextBox).Name = "tb_db_client_path" And _clicks_db <> 2 Then
+            If DirectCast(sender, System.Windows.Forms.TextBox).Name = "tb_db_client_path" And _clicks_db = SyncDirection.ClientToServer Then
                 populate_checkedlistbox(clb_databases, tb_db_client_path.Text, "databases", "*.db3")
                 populate_checkedlistbox(clb_db_objects, tb_db_client_path.Text, "db_db_objects", "*.*", ".db3")
                 populate_watchedchecklistbox(clb_watched)
-            ElseIf DirectCast(sender, System.Windows.Forms.TextBox).Name = "tb_db_server_path" And _clicks_db = 2 Then
+            ElseIf DirectCast(sender, System.Windows.Forms.TextBox).Name = "tb_db_server_path" And _clicks_db = SyncDirection.ServerToClient Then
                 populate_checkedlistbox(clb_databases, tb_db_server_path.Text, "databases", "*.db3")
                 populate_checkedlistbox(clb_db_objects, tb_db_server_path.Text, "db_db_objects", "*.*", ".db3")
                 populate_watchedchecklistbox(clb_watched)
-            ElseIf DirectCast(sender, System.Windows.Forms.TextBox).Name = "tb_folders_client_path" And _clicks_folders <> 2 Then
+            ElseIf DirectCast(sender, System.Windows.Forms.TextBox).Name = "tb_folders_client_path" And _clicks_folders = SyncDirection.ClientToServer Then
                 populate_checkedlistbox(clb_objects, tb_folders_client_path.Text, "thumbs")
-            ElseIf DirectCast(sender, System.Windows.Forms.TextBox).Name = "tb_folders_server_path" And _clicks_folders = 2 Then
+            ElseIf DirectCast(sender, System.Windows.Forms.TextBox).Name = "tb_folders_server_path" And _clicks_folders = SyncDirection.ServerToClient Then
                 populate_checkedlistbox(clb_objects, tb_folders_server_path.Text, "thumbs")
             End If
         End If
