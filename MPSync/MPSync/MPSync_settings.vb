@@ -100,7 +100,7 @@ Public Class MPSync_settings
         Try
             If listtype = "db_db_objects" Then
 
-                Dim all_checked As Boolean = (_databases = Nothing)
+                Dim all_checked As Boolean = (_db_objects = Nothing)
 
                 For Each objects As String In IO.Directory.GetFiles(path, searchpattern)
                     If IO.Path.GetExtension(objects) <> ommit Or ommit = Nothing Then
