@@ -11,7 +11,7 @@ Namespace MPSync
         Implements IShowPlugin
 
         Public Sub New()
-            MyBase.new()
+            MyBase.New()
         End Sub
 
 #Region "IPlugin members"
